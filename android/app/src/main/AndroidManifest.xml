@@ -20,7 +20,7 @@
         android:maxSdkVersion="32" />
 
     <application
-        android:label="Flutter Forge"
+        android:label="Screen Graveyard"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
 
