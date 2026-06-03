@@ -38,7 +38,7 @@ class _AppState extends State<App> {
                 ]),
                 unAuthenticated: (String? _) =>
                     _appRouter.replaceAll(<PageRouteInfo<Object?>>[
-                  const OnboardingWrapperRoute(),
+                  const HomeRoute(),
                 ]),
                 authenticated: () =>
                     _appRouter.replaceAll(<PageRouteInfo<Object?>>[
