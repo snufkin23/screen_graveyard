@@ -1,10 +1,9 @@
 ## What's Changed
 
-**Version:** 1.0.0 | **Build:** 0
+**Version:** 1.0.0 | **Build:** 19
 
-### ✨ Features
-- feat: add initial GitHub workflows for build and PR checks; create .env example and update assets
+### 🐛 Bug Fixes
+- fix: update app name from "Flutter Forge" to "Screen Graveyard" in AndroidManifest.xml and Info.plist; reset build version to 0 in CHANGELOG.md
 
-### ♻️ Refactors
-- refactor: update pubspec.yaml for improved dependencies and project structure; simplify widget test
-
+---
+_Generated automatically from commit messages_
