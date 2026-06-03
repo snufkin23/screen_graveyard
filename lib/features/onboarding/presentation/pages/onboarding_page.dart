@@ -1,0 +1,402 @@
+import 'package:auto_route/auto_route.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
+import 'package:screen_graveyard/core/app/presentation/blocs/app_permission/app_permission_cubit.dart';
+import 'package:screen_graveyard/core/constants/sizes.dart';
+import 'package:screen_graveyard/core/helpers/language_selector.dart';
+import 'package:screen_graveyard/core/router/app_router.gr.dart';
+import 'package:screen_graveyard/core/theme/app_text_styles.dart';
+import 'package:screen_graveyard/core/widgets/widgets.dart';
+import 'package:screen_graveyard/features/onboarding/presentation/blocs/onboarding_cubit.dart';
+import 'package:screen_graveyard/localization/localization.dart';
+
+@RoutePage()
+class OnboardingPage extends StatefulWidget {
+  const OnboardingPage({super.key});
+
+  @override
+  State<OnboardingPage> createState() => _OnboardingPageState();
+}
+
+class _OnboardingPageState extends State<OnboardingPage> {
+  final PageController _pageController = PageController();
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  void _syncPage(int page) {
+    if (_pageController.hasClients && _pageController.page?.round() != page) {
+      _pageController.animateToPage(
+        page,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocListener<OnboardingCubit, OnboardingState>(
+      listener: (BuildContext context, OnboardingState state) {
+        if (state.isCompleted) {
+          context.router.replace(const HomeRoute());
+        } else {
+          _syncPage(state.currentPage);
+        }
+      },
+      child: CustomScaffold(
+        showAppBar: true,
+        actions: const <Widget>[
+          LanguageSelector(),
+          SizedBox(width: 16),
+        ],
+        body: Column(
+          children: <Widget>[
+            Expanded(
+              child: PageView(
+                controller: _pageController,
+                physics: const NeverScrollableScrollPhysics(),
+                children: <Widget>[
+                  WelcomeView(
+                    onNext: () => context.read<OnboardingCubit>().nextPage(),
+                  ),
+                  PermissionView(
+                    onNext: () => context.read<OnboardingCubit>().nextPage(),
+                  ),
+                  DoneView(
+                    onFinish: () =>
+                        context.read<OnboardingCubit>().completeOnboarding(),
+                  ),
+                ],
+              ),
+            ),
+
+            // ── Page indicator ─────────────────────────────────
+            BlocSelector<OnboardingCubit, OnboardingState, int>(
+              selector: (OnboardingState state) => state.currentPage,
+              builder: (BuildContext context, int currentPage) {
+                return Padding(
+                  padding: EdgeInsets.only(bottom: AppSizes.xxl),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: List<Widget>.generate(
+                      3,
+                      (int index) => AnimatedContainer(
+                        duration: const Duration(milliseconds: 300),
+                        margin: EdgeInsets.symmetric(
+                          horizontal: AppSizes.xs,
+                        ),
+                        width: currentPage == index ? 24.w : 8.w,
+                        height: 8.h,
+                        decoration: BoxDecoration(
+                          color: currentPage == index
+                              ? Theme.of(context).colorScheme.primary
+                              : Theme.of(context)
+                                  .colorScheme
+                                  .onSurface
+                                  .withValues(alpha: 0.2),
+                          borderRadius: BorderRadius.circular(
+                            AppSizes.radiusFull,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ── Page 1: Welcome ───────────────────────────────────────────────
+class WelcomeView extends StatelessWidget {
+  const WelcomeView({required this.onNext, super.key});
+
+  final VoidCallback onNext;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.all(AppSizes.pagePadding),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Icon(
+            Icons.rocket_launch_rounded,
+            size: 100.w,
+            color: Theme.of(context).colorScheme.primary,
+          ),
+          32.verticalSpace,
+          Text(
+            context.l10n.onboardingTitle1,
+            textAlign: TextAlign.center,
+            style: AppTextStyles.headlineLarge,
+          ),
+          16.verticalSpace,
+          Text(
+            context.l10n.onboardingDesc1,
+            textAlign: TextAlign.center,
+            style: AppTextStyles.bodyMedium,
+          ),
+          48.verticalSpace,
+          CustomButton.text(
+            label: context.l10n.getStarted,
+            onPressed: onNext,
+            expanded: true,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ── Page 2: Permissions ───────────────────────────────────────────
+class PermissionView extends StatelessWidget {
+  const PermissionView({
+    required this.onNext,
+    super.key,
+  });
+
+  final VoidCallback onNext;
+
+  @override
+  Widget build(BuildContext context) {
+    final List<_PermissionItem> items = <_PermissionItem>[
+      _PermissionItem(
+        permission: AppPermission.camera,
+        icon: Icons.camera_alt_rounded,
+        title: context.l10n.camera,
+        description: context.l10n.cameraDesc,
+      ),
+      _PermissionItem(
+        permission: AppPermission.location,
+        icon: Icons.location_on_rounded,
+        title: context.l10n.location,
+        description: context.l10n.locationDesc,
+      ),
+      _PermissionItem(
+        permission: AppPermission.notification,
+        icon: Icons.notifications_rounded,
+        title: context.l10n.notifications,
+        description: context.l10n.notificationsDesc,
+      ),
+    ];
+
+    return Padding(
+      padding: EdgeInsets.all(AppSizes.pagePadding),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            context.l10n.allowPermissions,
+            style: AppTextStyles.headlineMedium,
+          ),
+          8.verticalSpace,
+          Text(
+            context.l10n.permissionsSubtitle,
+            style: AppTextStyles.bodyMedium,
+          ),
+          32.verticalSpace,
+          BlocBuilder<AppPermissionCubit, AppPermissionState>(
+            builder: (BuildContext context, AppPermissionState state) {
+              return Column(
+                children: items
+                    .map(
+                      (_PermissionItem item) => _PermissionTile(
+                        item: item,
+                        status: state.statuses[item.permission] ??
+                            AppPermissionStatus.initial,
+                        onTap: () async {
+                          final AppPermissionStatus result = await context
+                              .read<AppPermissionCubit>()
+                              .request(item.permission);
+                          if (result.isPermanentlyDenied) {
+                            if (!context.mounted) {
+                              return;
+                            }
+                            await context
+                                .read<AppPermissionCubit>()
+                                .openSettings();
+                          }
+                        },
+                      ),
+                    )
+                    .toList(),
+              );
+            },
+          ),
+          32.verticalSpace,
+          CustomButton.text(
+            label: context.l10n.continueButton,
+            onPressed: onNext,
+            expanded: true,
+          ),
+          12.verticalSpace,
+          CustomOutlinedButton.text(
+            label: context.l10n.skipForNow,
+            onPressed: onNext,
+            expanded: true,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ── Permission tile ───────────────────────────────────────────────
+class _PermissionTile extends StatelessWidget {
+  const _PermissionTile({
+    required this.item,
+    required this.status,
+    required this.onTap,
+  });
+
+  final _PermissionItem item;
+  final AppPermissionStatus status;
+  final VoidCallback onTap;
+
+  Color _color(BuildContext context) {
+    switch (status) {
+      case AppPermissionStatus.granted:
+        return Colors.green;
+      case AppPermissionStatus.denied:
+      case AppPermissionStatus.permanentlyDenied:
+      case AppPermissionStatus.restricted:
+        return Colors.red;
+      case AppPermissionStatus.initial:
+        return Theme.of(context).colorScheme.primary;
+    }
+  }
+
+  IconData _statusIcon() {
+    switch (status) {
+      case AppPermissionStatus.granted:
+        return Icons.check_circle_rounded;
+      case AppPermissionStatus.denied:
+      case AppPermissionStatus.restricted:
+        return Icons.cancel_rounded;
+      case AppPermissionStatus.permanentlyDenied:
+        return Icons.settings_rounded;
+      case AppPermissionStatus.initial:
+        return Icons.chevron_right_rounded;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: status.isGranted ? null : onTap,
+      child: Container(
+        margin: EdgeInsets.only(bottom: AppSizes.md),
+        padding: EdgeInsets.all(AppSizes.md),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(AppSizes.radiusMd),
+          border: Border.all(
+            color: _color(context).withValues(alpha: 0.3),
+          ),
+          color: _color(context).withValues(alpha: 0.05),
+        ),
+        child: Row(
+          children: <Widget>[
+            Container(
+              padding: EdgeInsets.all(AppSizes.sm),
+              decoration: BoxDecoration(
+                color: _color(context).withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(AppSizes.radiusSm),
+              ),
+              child: Icon(
+                item.icon,
+                color: _color(context),
+                size: AppSizes.iconMd,
+              ),
+            ),
+            SizedBox(width: AppSizes.md),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(item.title, style: AppTextStyles.labelLarge),
+                  4.verticalSpace,
+                  Text(
+                    item.description,
+                    style: AppTextStyles.bodySmall,
+                  ),
+                ],
+              ),
+            ),
+            Icon(
+              _statusIcon(),
+              color: _color(context),
+              size: AppSizes.iconMd,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ── Page 3: Done ──────────────────────────────────────────────────
+class DoneView extends StatelessWidget {
+  const DoneView({required this.onFinish, super.key});
+
+  final VoidCallback onFinish;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.all(AppSizes.pagePadding),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Icon(
+            Icons.check_circle_rounded,
+            size: 100.w,
+            color: Colors.green,
+          ),
+          32.verticalSpace,
+          Text(
+            context.l10n.allSet,
+            style: AppTextStyles.headlineLarge,
+          ),
+          16.verticalSpace,
+          Text(
+            context.l10n.allSetSubtitle,
+            textAlign: TextAlign.center,
+            style: AppTextStyles.bodyMedium,
+          ),
+          48.verticalSpace,
+          CustomButton.text(
+            label: context.l10n.goToApp,
+            onPressed: onFinish,
+            expanded: true,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ── Permission item config ────────────────────────────────────────
+class _PermissionItem {
+  const _PermissionItem({
+    required this.permission,
+    required this.icon,
+    required this.title,
+    required this.description,
+  });
+
+  final AppPermission permission;
+  final IconData icon;
+  final String title;
+  final String description;
+}
