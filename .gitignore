@@ -81,6 +81,18 @@ lib/localization/generated/**
 .env*
 !.env.example
 
+# Firebase
+firebase.json
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
+lib/firebase_options.dart
+.firebaserc
+
+# Android Signing
+*.jks
+*.keystore
+android/key.properties
+
 # FVM Version Cache
 .fvm/
 /.opencode

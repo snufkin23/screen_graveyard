@@ -1,10 +1,12 @@
 import 'dart:async';
 
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:screen_graveyard/core/app/presentation/app.dart';
 import 'package:screen_graveyard/core/di/injection.dart';
 import 'package:screen_graveyard/core/notifications/notification_service.dart';
+import 'package:screen_graveyard/firebase_options.dart';
 
 Future<void> main() async {
   await runZonedGuarded(
@@ -14,6 +16,11 @@ Future<void> main() async {
 
       // ── Splash ─────────────────────────────────────────────────
       FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+
+      // ── Firebase ───────────────────────────────────────────────────
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
 
       // ── Flutter framework errors ────────────────────────────────
       FlutterError.onError = (FlutterErrorDetails details) {
