@@ -4,8 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:nested/nested.dart';
-import 'package:screen_graveyard/core/app/presentation/blocs/app_locale/app_locale_cubit.dart';
-import 'package:screen_graveyard/core/app/presentation/blocs/app_theme/app_theme_cubit.dart';
 import 'package:screen_graveyard/core/di/injection.dart';
 import 'package:screen_graveyard/core/router/app_router.dart';
 import 'package:screen_graveyard/core/router/app_router.gr.dart';
@@ -65,29 +63,19 @@ class _AppMaterialRouter extends StatelessWidget {
       designSize: const Size(390, 844),
       minTextAdapt: true,
       splitScreenMode: true,
-      child: BlocSelector<AppThemeCubit, ThemeMode, ThemeMode>(
-        selector: (ThemeMode themeMode) => themeMode,
-        builder: (BuildContext context, ThemeMode themeMode) {
-          return BlocSelector<AppLocaleCubit, AppLocale, Locale>(
-            selector: (AppLocale appLocale) => appLocale.locale,
-            builder: (BuildContext context, Locale locale) {
-              return MaterialApp.router(
-                routerConfig: appRouter.config(),
-                theme: AppTheme.light,
-                darkTheme: AppTheme.dark,
-                themeMode: themeMode,
-                locale: locale,
-                localizationsDelegates: const <LocalizationsDelegate<dynamic>>[
-                  AppLocalizations.delegate,
-                  GlobalMaterialLocalizations.delegate,
-                  GlobalWidgetsLocalizations.delegate,
-                  GlobalCupertinoLocalizations.delegate,
-                ],
-                supportedLocales: AppLocalizations.delegate.supportedLocales,
-              );
-            },
-          );
-        },
+      child: MaterialApp.router(
+        routerConfig: appRouter.config(),
+        theme: AppTheme.light,
+        darkTheme: AppTheme.dark,
+        themeMode: GlobalConfigProvider.of(context).themeMode,
+        locale: GlobalConfigProvider.of(context).locale,
+        localizationsDelegates: const <LocalizationsDelegate<dynamic>>[
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: AppLocalizations.delegate.supportedLocales,
       ),
     );
   }

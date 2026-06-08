@@ -10,6 +10,36 @@ import 'package:screen_graveyard/core/di/injection.dart';
 import 'package:screen_graveyard/core/storage/local_storage.dart';
 import 'package:screen_graveyard/features/onboarding/presentation/blocs/onboarding_cubit.dart';
 
+class GlobalAppConfig {
+  const GlobalAppConfig({required this.locale, required this.themeMode});
+  final Locale locale;
+  final ThemeMode themeMode;
+}
+
+class GlobalConfigProvider extends InheritedWidget {
+  const GlobalConfigProvider({
+    required this.config,
+    required super.child,
+    super.key,
+  });
+  final GlobalAppConfig config;
+
+  static GlobalAppConfig of(BuildContext context) {
+    final GlobalConfigProvider? provider =
+        context.dependOnInheritedWidgetOfExactType<GlobalConfigProvider>();
+    if (provider == null) {
+      throw Exception('GlobalConfigProvider not found in context');
+    }
+    return provider.config;
+  }
+
+  @override
+  bool updateShouldNotify(GlobalConfigProvider oldWidget) {
+    return config.locale != oldWidget.config.locale ||
+        config.themeMode != oldWidget.config.themeMode;
+  }
+}
+
 class GlobalAppProvider extends StatelessWidget {
   const GlobalAppProvider({required this.child, super.key});
   final Widget child;
@@ -35,7 +65,21 @@ class GlobalAppProvider extends StatelessWidget {
           create: (_) => OnboardingCubit(getIt<LocalStorage>())..checkStatus(),
         ),
       ],
-      child: child,
+      child: BlocBuilder<AppThemeCubit, ThemeMode>(
+        builder: (BuildContext context, ThemeMode themeMode) {
+          return BlocBuilder<AppLocaleCubit, AppLocale>(
+            builder: (BuildContext context, AppLocale appLocale) {
+              return GlobalConfigProvider(
+                config: GlobalAppConfig(
+                  locale: appLocale.locale,
+                  themeMode: themeMode,
+                ),
+                child: child,
+              );
+            },
+          );
+        },
+      ),
     );
   }
 }
