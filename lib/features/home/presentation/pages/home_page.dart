@@ -1,5 +1,6 @@
 import 'package:auto_route/annotations.dart';
 import 'package:flutter/material.dart';
+import 'package:screen_graveyard/core/widgets/widgets.dart';
 
 @RoutePage()
 class HomePage extends StatefulWidget {
@@ -12,8 +13,9 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Home Page')),
+    return CustomScaffold(
+      showAppBar: true,
+      title: 'Home Page',
       body: const Center(child: Text('Home Page')),
     );
   }
