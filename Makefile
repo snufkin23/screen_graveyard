@@ -7,6 +7,9 @@ gen:
 	dart run build_runner build --delete-conflicting-outputs
 	dart run intl_utils:generate
 
+local:
+	dart run intl_utils:generate
+
 watch:
 	dart run build_runner watch --delete-conflicting-outputs
 
