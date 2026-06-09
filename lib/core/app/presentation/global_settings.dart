@@ -18,7 +18,8 @@ class GlobalSettings {
   static ThemeMode get currentThemeMode => themeCubit.state;
 
   /// Set app locale
-  static Future<void> setLocale(AppLocale locale) => localeCubit.setLocale(locale);
+  static Future<void> setLocale(AppLocale locale) =>
+      localeCubit.setLocale(locale);
 
   /// Set app theme mode
   static Future<void> setThemeMode(ThemeMode mode) => themeCubit.setMode(mode);

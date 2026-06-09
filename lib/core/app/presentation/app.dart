@@ -6,7 +6,6 @@ import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:nested/nested.dart';
 import 'package:screen_graveyard/core/di/injection.dart';
 import 'package:screen_graveyard/core/router/app_router.dart';
-import 'package:screen_graveyard/core/router/app_router.gr.dart';
 import 'package:screen_graveyard/core/theme/theme.dart';
 import 'package:screen_graveyard/localization/localization.dart';
 
@@ -30,18 +29,18 @@ class _AppState extends State<App> {
         listeners: <SingleChildWidget>[
           BlocListener<AppStartupCubit, AppStartupState>(
             listener: (BuildContext _, AppStartupState state) {
-              state.when(
-                initial: () => _appRouter.replaceAll(<PageRouteInfo<Object?>>[
-                  const OnboardingWrapperRoute(),
-                ]),
-                unAuthenticated: (String? _) =>
-                    _appRouter.replaceAll(<PageRouteInfo<Object?>>[
-                  const HomeRoute(),
-                ]),
-                authenticated: () =>
-                    _appRouter.replaceAll(<PageRouteInfo<Object?>>[
-                  const HomeRoute(),
-                ]),
+              state.maybeWhen(
+                orElse: () {},
+                onboarding: () {
+                  _appRouter.replaceAll(<PageRouteInfo<Object?>>[
+                    const OnboardingRoute(),
+                  ]);
+                },
+                ready: () {
+                  _appRouter.replaceAll(<PageRouteInfo<Object?>>[
+                    const HomeRoute(),
+                  ]);
+                },
               );
             },
           ),

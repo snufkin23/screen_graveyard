@@ -30,5 +30,6 @@
   "allSet": "You're all set!",
   "allSetSubtitle": "Everything is ready.\nLet's get started.",
   "goToApp": "Go to App",
-  "allSetTitle": "All Set"
+  "allSetTitle": "All Set",
+  "back": "Back"
 }

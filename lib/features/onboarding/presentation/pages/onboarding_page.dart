@@ -2,14 +2,12 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
-import 'package:screen_graveyard/core/constants/sizes.dart';
-import 'package:screen_graveyard/core/helpers/language_selector.dart';
 import 'package:screen_graveyard/core/router/app_router.gr.dart';
 import 'package:screen_graveyard/core/widgets/widgets.dart';
-import 'package:screen_graveyard/features/onboarding/presentation/blocs/onboarding_cubit.dart';
-import 'package:screen_graveyard/features/onboarding/presentation/pages/views/done_view.dart';
-import 'package:screen_graveyard/features/onboarding/presentation/pages/views/permission_view.dart';
-import 'package:screen_graveyard/features/onboarding/presentation/pages/views/welcome_view.dart';
+import 'package:screen_graveyard/features/onboarding/presentation/blocs/onboarding/onboarding_cubit.dart';
+import 'package:screen_graveyard/features/onboarding/presentation/widgets/onboarding_progress_indicator.dart';
+import 'package:screen_graveyard/features/onboarding/presentation/widgets/onboarding_step_view.dart';
+import 'package:screen_graveyard/localization/localization.dart';
 
 @RoutePage()
 class OnboardingPage extends StatefulWidget {
@@ -20,7 +18,23 @@ class OnboardingPage extends StatefulWidget {
 }
 
 class _OnboardingPageState extends State<OnboardingPage> {
-  final PageController _pageController = PageController();
+  late final PageController _pageController;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final int initialIndex = context.read<OnboardingCubit>().state.when(
+            introduction: () => 0,
+            about: () => 1,
+            permission: () => 2,
+            completed: () => 2,
+          );
+      _pageController.jumpToPage(initialIndex);
+    });
+  }
 
   @override
   void dispose() {
@@ -28,90 +42,103 @@ class _OnboardingPageState extends State<OnboardingPage> {
     super.dispose();
   }
 
-  void _syncPage(int page) {
-    if (_pageController.hasClients && _pageController.page?.round() != page) {
-      _pageController.animateToPage(
-        page,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return BlocListener<OnboardingCubit, OnboardingState>(
       listener: (BuildContext context, OnboardingState state) {
-        if (state.isCompleted) {
-          context.router
-              .replaceAll(<PageRouteInfo<Object?>>[const HomeRoute()]);
-        } else {
-          _syncPage(state.currentPage);
-        }
+        final int index = state.when(
+          introduction: () => 0,
+          about: () => 1,
+          permission: () => 2,
+          completed: () => 2,
+        );
+
+        _pageController.animateToPage(
+          index,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
+
+        state.maybeWhen(
+          completed: () => context.router.replace(const HomeRoute()),
+          orElse: () {},
+        );
       },
-      child: CustomScaffold(
-        showAppBar: true,
-        actions: const <Widget>[
-          LanguageSelector(),
-          SizedBox(width: 16),
-        ],
-        body: Column(
-          children: <Widget>[
-            Expanded(
-              child: PageView(
-                controller: _pageController,
-                physics: const NeverScrollableScrollPhysics(),
+      child: BlocBuilder<OnboardingCubit, OnboardingState>(
+        builder: (BuildContext context, OnboardingState state) {
+          final int currentIndex = state.when(
+            introduction: () => 0,
+            about: () => 1,
+            permission: () => 2,
+            completed: () => 2,
+          );
+
+          return CustomScaffold(
+            body: SafeArea(
+              child: Column(
                 children: <Widget>[
-                  WelcomeView(
-                    onNext: () => context.read<OnboardingCubit>().nextPage(),
+                  Expanded(
+                    child: PageView(
+                      controller: _pageController,
+                      onPageChanged: (int index) {
+                        if (index > currentIndex) {
+                          context.read<OnboardingCubit>().next();
+                        } else if (index < currentIndex) {
+                          context.read<OnboardingCubit>().previous();
+                        }
+                      },
+                      children: <Widget>[
+                        OnboardingStepView(
+                          image: 'assets/images/onboarding_1.png',
+                          title: localization.onboardingTitle1,
+                          description: localization.onboardingDesc1,
+                        ),
+                        OnboardingStepView(
+                          image: 'assets/images/onboarding_2.png',
+                          title: localization.onboardingTitle2,
+                          description: localization.onboardingDesc2,
+                        ),
+                        OnboardingStepView(
+                          image: 'assets/images/onboarding_3.png',
+                          title: localization.onboardingTitle3,
+                          description: localization.onboardingDesc3,
+                        ),
+                      ],
+                    ),
                   ),
-                  PermissionView(
-                    onNext: () => context.read<OnboardingCubit>().nextPage(),
-                  ),
-                  DoneView(
-                    onFinish: () =>
-                        context.read<OnboardingCubit>().completeOnboarding(),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 32.h),
+                    child: Column(
+                      children: <Widget>[
+                        OnboardingProgressIndicator(
+                          currentIndex: currentIndex,
+                          totalSteps: 3,
+                        ),
+                        SizedBox(height: 32.h),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            if (currentIndex > 0)
+                              CustomOutlinedButton(
+                                label: localization.back,
+                                onPressed: () => context.read<OnboardingCubit>().previous(),
+                              )
+                            else
+                              const SizedBox.shrink(),
+                            CustomButton(
+                              label: currentIndex == 2 ? localization.getStarted : localization.continueButton,
+                              onPressed: () => context.read<OnboardingCubit>().next(),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
             ),
-
-            // ── Page indicator ─────────────────────────────────
-            BlocSelector<OnboardingCubit, OnboardingState, int>(
-              selector: (OnboardingState state) => state.currentPage,
-              builder: (BuildContext context, int currentPage) {
-                return Padding(
-                  padding: EdgeInsets.only(bottom: AppSizes.xxl),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: List<Widget>.generate(
-                      3,
-                      (int index) => AnimatedContainer(
-                        duration: const Duration(milliseconds: 300),
-                        margin: EdgeInsets.symmetric(
-                          horizontal: AppSizes.xs,
-                        ),
-                        width: currentPage == index ? 24.w : 8.w,
-                        height: 8.h,
-                        decoration: BoxDecoration(
-                          color: currentPage == index
-                              ? Theme.of(context).colorScheme.primary
-                              : Theme.of(context)
-                                  .colorScheme
-                                  .onSurface
-                                  .withValues(alpha: 0.2),
-                          borderRadius: BorderRadius.circular(
-                            AppSizes.radiusFull,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }

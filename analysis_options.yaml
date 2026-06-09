@@ -1,5 +1,8 @@
 include: package:flutter_lints/flutter.yaml
 
+formatter:
+  page_width: 123
+
 analyzer:
   exclude:
     # Generated files
@@ -13,16 +16,17 @@ analyzer:
     - "lib/localization/generated/**"
 
   errors:
-    invalid_annotation_target: ignore   # freezed needs this
-    missing_required_param: error       # ← was 'true', must be error/warning/info
-    invalid_assignment: error           # ← was 'true', must be error/warning/info
-    unused_import: warning              # ← was 'ignore', better as warning
+    invalid_annotation_target: ignore # freezed needs this
+    missing_required_param: error # ← was 'true', must be error/warning/info
+    invalid_assignment: error # ← was 'true', must be error/warning/info
+    unused_import: warning # ← was 'ignore', better as warning
     unused_local_variable: warning
+    strict_raw_type: ignore
 
   language:
-    strict-casts: true        # no implicit casts
-    strict-inference: true    # no untyped closures/variables
-    strict-raw-types: true    # no raw List, Map, Box etc.
+    strict-casts: true # no implicit casts
+    strict-inference: true # no untyped closures/variables
+    strict-raw-types: true # no raw List, Map, Box etc.
 
 linter:
   rules:
@@ -64,7 +68,7 @@ linter:
     always_specify_types: true
 
     # —— Docs —————————————————————————————————————
-    public_member_api_docs: false       # too noisy for app code
+    public_member_api_docs: false # too noisy for app code
 
     # —— Disabled —————————————————————————————————
-    lines_longer_than_80_chars: false   # handled by formatter
+    lines_longer_than_80_chars: false # handled by formatter
