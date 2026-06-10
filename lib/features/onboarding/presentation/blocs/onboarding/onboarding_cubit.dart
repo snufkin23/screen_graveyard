@@ -81,3 +81,4 @@ class OnboardingCubit extends Cubit<OnboardingState> {
     );
   }
 }
+

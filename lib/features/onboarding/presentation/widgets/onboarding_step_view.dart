@@ -3,18 +3,19 @@ import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 
 class OnboardingStepView extends StatelessWidget {
   const OnboardingStepView({
-    required this.image,
+    required this.icon,
     required this.title,
     required this.description,
     super.key,
   });
 
-  final String image;
+  final IconData icon;
   final String title;
   final String description;
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
     return Padding(
       padding: EdgeInsets.all(24.w),
       child: Column(
@@ -22,11 +23,18 @@ class OnboardingStepView extends StatelessWidget {
         children: <Widget>[
           Expanded(
             child: Center(
-              child: Image.asset(
-                image,
-                width: 300.w,
-                height: 300.w,
-                fit: BoxFit.contain,
+              child: Container(
+                width: 220.w,
+                height: 220.w,
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.surfaceContainerHighest,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  icon,
+                  size: 80.sp,
+                  color: theme.colorScheme.primary,
+                ),
               ),
             ),
           ),
@@ -34,7 +42,7 @@ class OnboardingStepView extends StatelessWidget {
           Text(
             title,
             textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+            style: theme.textTheme.headlineMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                   fontSize: 24.sp,
                 ),
@@ -43,9 +51,9 @@ class OnboardingStepView extends StatelessWidget {
           Text(
             description,
             textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+            style: theme.textTheme.bodyLarge?.copyWith(
                   fontSize: 16.sp,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  color: theme.colorScheme.onSurfaceVariant,
                 ),
           ),
           SizedBox(height: 40.h),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:screen_graveyard/core/app/presentation/blocs/app_locale/app_locale_cubit.dart';
 import 'package:screen_graveyard/core/constants/sizes.dart';
+import 'package:screen_graveyard/core/extensions/theme_context.dart';
 import 'package:screen_graveyard/core/theme/app_text_styles.dart';
 
 class LanguageSelector extends StatelessWidget {
@@ -11,15 +12,13 @@ class LanguageSelector extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<AppLocaleCubit, AppLocale>(
       builder: (BuildContext context, AppLocale current) {
-        final ThemeData theme = Theme.of(context);
         return Container(
           padding: EdgeInsets.all(AppSizes.xs),
           decoration: BoxDecoration(
-            color: theme.colorScheme.surfaceContainerHighest
-                .withValues(alpha: 0.3),
+            color: context.colors.surfaceContainerHighest.withValues(alpha: 0.3),
             borderRadius: BorderRadius.circular(AppSizes.radiusFull),
             border: Border.all(
-              color: theme.dividerColor.withValues(alpha: 0.1),
+              color: context.colors.onSurface.withValues(alpha: 0.5),
             ),
           ),
           child: Row(
@@ -52,8 +51,6 @@ class _LangOptionWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ThemeData theme = Theme.of(context);
-
     return Tooltip(
       message: lang.displayName,
       child: GestureDetector(
@@ -67,12 +64,12 @@ class _LangOptionWidget extends StatelessWidget {
             vertical: AppSizes.sm,
           ),
           decoration: BoxDecoration(
-            color: _isSelected ? theme.colorScheme.primary : Colors.transparent,
+            color: _isSelected ? context.colors.primary : Colors.transparent,
             borderRadius: BorderRadius.circular(AppSizes.radiusFull),
             boxShadow: _isSelected
                 ? <BoxShadow>[
                     BoxShadow(
-                      color: theme.colorScheme.primary.withValues(alpha: 0.3),
+                      color: context.colors.primary.withValues(alpha: 0.3),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),
@@ -84,15 +81,13 @@ class _LangOptionWidget extends StatelessWidget {
             children: <Widget>[
               Text(
                 lang.flag,
-                style: const TextStyle(fontSize: 16),
+                style: AppTextStyles.labelSmall,
               ),
               SizedBox(width: AppSizes.xs),
               Text(
                 lang.short,
                 style: AppTextStyles.labelSmall.copyWith(
-                  color: _isSelected
-                      ? theme.colorScheme.onPrimary
-                      : theme.colorScheme.onSurface,
+                  color: _isSelected ? context.colors.onPrimary : context.colors.onSurface,
                   fontWeight: _isSelected ? FontWeight.w700 : FontWeight.w500,
                 ),
               ),

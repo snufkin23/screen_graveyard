@@ -20,6 +20,10 @@ class OnboardingPage extends StatefulWidget {
 class _OnboardingPageState extends State<OnboardingPage> {
   late final PageController _pageController;
 
+  static const IconData _introIcon = Icons.auto_awesome_rounded;
+  static const IconData _aboutIcon = Icons.architecture_rounded;
+  static const IconData _permissionIcon = Icons.tune_rounded;
+
   @override
   void initState() {
     super.initState();
@@ -89,17 +93,17 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       },
                       children: <Widget>[
                         OnboardingStepView(
-                          image: 'assets/images/onboarding_1.png',
+                          icon: _introIcon,
                           title: localization.onboardingTitle1,
                           description: localization.onboardingDesc1,
                         ),
                         OnboardingStepView(
-                          image: 'assets/images/onboarding_2.png',
+                          icon: _aboutIcon,
                           title: localization.onboardingTitle2,
                           description: localization.onboardingDesc2,
                         ),
                         OnboardingStepView(
-                          image: 'assets/images/onboarding_3.png',
+                          icon: _permissionIcon,
                           title: localization.onboardingTitle3,
                           description: localization.onboardingDesc3,
                         ),
