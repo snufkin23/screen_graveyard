@@ -115,7 +115,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
                     ),
                     Padding(
                       padding: EdgeInsets.symmetric(
-                          horizontal: 24.w, vertical: 32.h),
+                        horizontal: 24.w,
+                        vertical: 32.h,
+                      ),
                       child: Column(
                         children: <Widget>[
                           OnboardingProgressIndicator(
