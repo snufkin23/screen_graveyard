@@ -144,9 +144,9 @@ class _ConfirmDialog extends StatelessWidget {
             SizedBox(height: AppSizes.sm),
             Text(
               message,
-               style: AppTextStyles.bodyMedium.copyWith(
-                 color: context.colors.onSurfaceVariant,
-               ),
+              style: AppTextStyles.bodyMedium.copyWith(
+                color: context.colors.onSurfaceVariant,
+              ),
             ),
             SizedBox(height: AppSizes.xxl),
             Row(
@@ -213,9 +213,9 @@ class _InfoDialog extends StatelessWidget {
             SizedBox(height: AppSizes.sm),
             Text(
               message,
-               style: AppTextStyles.bodyMedium.copyWith(
-                 color: context.colors.onSurfaceVariant,
-               ),
+              style: AppTextStyles.bodyMedium.copyWith(
+                color: context.colors.onSurfaceVariant,
+              ),
               textAlign: TextAlign.center,
             ),
             SizedBox(height: AppSizes.xxl),
@@ -301,9 +301,9 @@ class _PromptDialogState extends State<_PromptDialog> {
                 SizedBox(height: AppSizes.xs),
                 Text(
                   widget.message!,
-                    style: AppTextStyles.bodyMedium.copyWith(
-                      color: context.colors.onSurfaceVariant,
-                    ),
+                  style: AppTextStyles.bodyMedium.copyWith(
+                    color: context.colors.onSurfaceVariant,
+                  ),
                 ),
               ],
               SizedBox(height: AppSizes.lg),

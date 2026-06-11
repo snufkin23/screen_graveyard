@@ -111,7 +111,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 32.h),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 24.w, vertical: 32.h),
                     child: Column(
                       children: <Widget>[
                         OnboardingProgressIndicator(
@@ -125,13 +126,17 @@ class _OnboardingPageState extends State<OnboardingPage> {
                             if (currentIndex > 0)
                               CustomOutlinedButton(
                                 label: localization.back,
-                                onPressed: () => context.read<OnboardingCubit>().previous(),
+                                onPressed: () =>
+                                    context.read<OnboardingCubit>().previous(),
                               )
                             else
                               const SizedBox.shrink(),
                             CustomButton(
-                              label: currentIndex == 2 ? localization.getStarted : localization.continueButton,
-                              onPressed: () => context.read<OnboardingCubit>().next(),
+                              label: currentIndex == 2
+                                  ? localization.getStarted
+                                  : localization.continueButton,
+                              onPressed: () =>
+                                  context.read<OnboardingCubit>().next(),
                             ),
                           ],
                         ),

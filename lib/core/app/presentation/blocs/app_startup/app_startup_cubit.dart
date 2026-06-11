@@ -25,7 +25,8 @@ class AppStartupCubit extends Cubit<AppStartupState> {
 
   Future<void> _init() async {
     await Future<void>.microtask(() async {
-      final String? storedStepName = _storage.get<String>(AppConstants.onboardingStepKey);
+      final String? storedStepName =
+          _storage.get<String>(AppConstants.onboardingStepKey);
       final OnboardingStep step = OnboardingStep.fromString(storedStepName);
 
       if (step == OnboardingStep.completed) {

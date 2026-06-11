@@ -10,7 +10,6 @@ import 'package:screen_graveyard/core/di/injection.dart';
 import 'package:screen_graveyard/core/storage/local_storage.dart';
 import 'package:screen_graveyard/features/onboarding/presentation/blocs/onboarding/onboarding_cubit.dart';
 
-
 class GlobalAppConfig {
   const GlobalAppConfig({required this.locale, required this.themeMode});
   final Locale locale;

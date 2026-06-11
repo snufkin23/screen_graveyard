@@ -49,3 +49,13 @@ setup: clean splash icons gen
 
 # —————————————————————————————————————————
 .PHONY: gen watch splash icons clean format lint test run build-apk build-ios setup
+
+-include Makefile.local
+
+qa: distribute-qa
+
+dev: distribute-dev
+
+client: distribute-client
+
+aab: distribute-aab

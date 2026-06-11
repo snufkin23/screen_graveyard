@@ -58,7 +58,8 @@ abstract class AppTheme {
           backgroundColor: AppColors.primary,
           foregroundColor: AppColors.onSurfaceDark,
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           textStyle: AppTextStyles.titleMedium.copyWith(
             color: AppColors.onSurfaceDark,
             fontWeight: FontWeight.w600,
@@ -66,7 +67,8 @@ abstract class AppTheme {
           elevation: 0,
         ).copyWith(
           // Pressed state
-          backgroundColor: WidgetStateProperty.resolveWith((Set<WidgetState> states) {
+          backgroundColor:
+              WidgetStateProperty.resolveWith((Set<WidgetState> states) {
             if (states.contains(WidgetState.pressed)) {
               return AppColors.primaryDark;
             }
@@ -83,7 +85,8 @@ abstract class AppTheme {
           foregroundColor: AppColors.primary,
           side: const BorderSide(color: AppColors.primary, width: 1.5),
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           textStyle: AppTextStyles.titleMedium.copyWith(
             color: AppColors.primary,
             fontWeight: FontWeight.w600,
@@ -115,7 +118,8 @@ abstract class AppTheme {
         labelStyle: AppTextStyles.labelLarge.copyWith(
           color: AppColors.onSurfaceVariantDark,
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: AppColors.borderDark, width: 1),

@@ -15,7 +15,8 @@ class LanguageSelector extends StatelessWidget {
         return Container(
           padding: EdgeInsets.all(AppSizes.xs),
           decoration: BoxDecoration(
-            color: context.colors.surfaceContainerHighest.withValues(alpha: 0.3),
+            color:
+                context.colors.surfaceContainerHighest.withValues(alpha: 0.3),
             borderRadius: BorderRadius.circular(AppSizes.radiusFull),
             border: Border.all(
               color: context.colors.onSurface.withValues(alpha: 0.5),
@@ -87,7 +88,9 @@ class _LangOptionWidget extends StatelessWidget {
               Text(
                 lang.short,
                 style: AppTextStyles.labelSmall.copyWith(
-                  color: _isSelected ? context.colors.onPrimary : context.colors.onSurface,
+                  color: _isSelected
+                      ? context.colors.onPrimary
+                      : context.colors.onSurface,
                   fontWeight: _isSelected ? FontWeight.w700 : FontWeight.w500,
                 ),
               ),

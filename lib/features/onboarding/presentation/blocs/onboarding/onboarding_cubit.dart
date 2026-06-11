@@ -17,7 +17,8 @@ class OnboardingCubit extends Cubit<OnboardingState> {
   final LocalStorage _storage;
 
   void _loadPersistedState() {
-    final String? storedStepName = _storage.get<String>(AppConstants.onboardingStepKey);
+    final String? storedStepName =
+        _storage.get<String>(AppConstants.onboardingStepKey);
     final OnboardingStep step = OnboardingStep.fromString(storedStepName);
     emit(_mapStepToState(step));
   }
@@ -81,4 +82,3 @@ class OnboardingCubit extends Cubit<OnboardingState> {
     );
   }
 }
-

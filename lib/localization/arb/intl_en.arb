@@ -37,5 +37,7 @@
   "welcomeTitle2": "Clean Architecture",
   "welcomeDesc2": "Organized layers for every concern.\nDomain, data, and presentation.",
   "welcomeTitle3": "Ready to Build",
-  "welcomeDesc3": "All systems initialized.\nLet's create something remarkable."
+  "welcomeDesc3": "All systems initialized.\\nLet's create something remarkable.",
+  "welcomeScreenTitle": "Welcome to Screen Graveyard",
+  "welcomeScreenDesc": "Your phone's daily obituary. Witness the death of your apps."
 }
