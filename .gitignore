@@ -96,4 +96,4 @@ android/key.properties
 # FVM Version Cache
 .fvm/
 /.opencode
-/.kilo
+Makefile.local
