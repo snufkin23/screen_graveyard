@@ -30,9 +30,10 @@ class _AppState extends State<App> {
           BlocListener<AppStartupCubit, AppStartupState>(
             listener: (BuildContext _, AppStartupState state) {
               state.maybeWhen(
-                orElse: () => _appRouter.replaceAll(<PageRouteInfo<Object?>>[
+                initial: () => _appRouter.replaceAll(<PageRouteInfo<Object?>>[
                   const WelcomeRoute(),
                 ]),
+                orElse: () {},
                 onboarding: () {
                   _appRouter.replaceAll(<PageRouteInfo<Object?>>[
                     const OnboardingRoute(),
