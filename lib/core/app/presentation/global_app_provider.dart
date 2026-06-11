@@ -8,7 +8,6 @@ import 'package:screen_graveyard/core/app/presentation/blocs/app_theme/app_theme
 import 'package:screen_graveyard/core/app/presentation/blocs/notification/notification_cubit.dart';
 import 'package:screen_graveyard/core/di/injection.dart';
 import 'package:screen_graveyard/core/storage/local_storage.dart';
-import 'package:screen_graveyard/features/onboarding/presentation/blocs/onboarding/onboarding_cubit.dart';
 
 class GlobalAppConfig {
   const GlobalAppConfig({required this.locale, required this.themeMode});
@@ -60,9 +59,6 @@ class GlobalAppProvider extends StatelessWidget {
         BlocProvider<AppPermissionCubit>(create: (_) => AppPermissionCubit()),
         BlocProvider<NotificationCubit>(
           create: (_) => getIt<NotificationCubit>(),
-        ),
-        BlocProvider<OnboardingCubit>(
-          create: (_) => OnboardingCubit(getIt<LocalStorage>()),
         ),
       ],
       child: BlocBuilder<AppThemeCubit, ThemeMode>(
