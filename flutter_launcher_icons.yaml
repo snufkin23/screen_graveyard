@@ -4,11 +4,11 @@ flutter_launcher_icons:
   ios: true
 
   # Main icon (used for iOS + Android legacy)
-  image_path: "assets/images/app_icon.png"
+  image_path: "assets/images/app/app_icon.png"
 
   # Android adaptive icon (API 26+)
   adaptive_icon_background: "#0D0D0F"
-  adaptive_icon_foreground: "assets/images/app_icon_foreground.png"
+  adaptive_icon_foreground: "assets/images/app/app_icon_foreground.png"
 
   # Android min sdk
   min_sdk_android: 21
