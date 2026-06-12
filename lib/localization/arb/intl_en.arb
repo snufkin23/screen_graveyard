@@ -39,5 +39,23 @@
   "welcomeTitle3": "Ready to Build",
   "welcomeDesc3": "All systems initialized.\\nLet's create something remarkable.",
   "welcomeScreenTitle": "Welcome to Screen Graveyard",
-  "welcomeScreenDesc": "Your phone's daily obituary. Witness the death of your apps."
+  "welcomeScreenDesc": "Your phone's daily obituary. Witness the death of your apps.",
+  "todaysReport": "Today's Report",
+  "unlocks": "Unlocks",
+  "screenTime": "Screen Time",
+  "dismissed": "Dismissed",
+  "topOffenders": "Top Offenders",
+  "mostIgnored": "Most Ignored",
+  "onlyToday": "Only {time} today",
+  "@onlyToday": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "noDataYet": "No data yet",
+  "emptySubtitle": "Grant usage access and come back later\nto see your phone's daily report.",
+  "oops": "Oops!",
+  "retry": "Retry"
 }

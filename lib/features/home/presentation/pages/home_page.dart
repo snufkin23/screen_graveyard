@@ -4,12 +4,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:screen_graveyard/core/constants/sizes.dart';
 import 'package:screen_graveyard/core/di/injection.dart';
 import 'package:screen_graveyard/core/error/app_exception.dart';
-import 'package:screen_graveyard/core/extensions/theme_context.dart';
+import 'package:screen_graveyard/core/helpers/helpers.dart';
 import 'package:screen_graveyard/core/theme/app_colors.dart';
 import 'package:screen_graveyard/core/theme/app_text_styles.dart';
 import 'package:screen_graveyard/core/widgets/widgets.dart';
 import 'package:screen_graveyard/features/summary/domain/entities/daily_snapshot.dart';
 import 'package:screen_graveyard/features/summary/presentation/blocs/summary/summary_cubit.dart';
+import 'package:screen_graveyard/localization/localization.dart';
 
 @RoutePage()
 class HomePage extends StatefulWidget {
@@ -29,7 +30,7 @@ class _HomePageState extends State<HomePage> {
           return CustomScaffold(
             usePadding: false,
             showAppBar: true,
-            title: "Today's Report",
+            title: AppLocalizations.of(context).todaysReport,
             body: BlocBuilder<SummaryCubit, SummaryState>(
               builder: (BuildContext context, SummaryState state) {
                 return state.when(
@@ -48,29 +49,6 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-// ── Helpers ────────────────────────────────────────────────────────────
-
-String _formatDuration(Duration d) {
-  final int h = d.inHours;
-  final int m = d.inMinutes.remainder(60);
-  if (h > 0) {
-    return '${h}h ${m}m';
-  }
-  return '${m}m';
-}
-
-String _appLabel(String packageName) {
-  final List<String> parts = packageName.split('.');
-  if (parts.length >= 2) {
-    final String last = parts.last;
-    if (last.length <= 2 && parts.length >= 3) {
-      return parts[parts.length - 2];
-    }
-    return '${last[0].toUpperCase()}${last.substring(1)}';
-  }
-  return packageName;
-}
-
 // ════════════════════════════════════════════════════════════════════════
 // LOADING VIEW
 // ════════════════════════════════════════════════════════════════════════
@@ -80,32 +58,31 @@ class _SummaryLoadingView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final AppColorScheme colors = context.appColors;
-    final double screenWidth = context.width;
+    final double screenWidth = MediaQuery.of(context).size.width;
     return SingleChildScrollView(
       padding: EdgeInsets.all(AppSizes.pagePadding),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           SizedBox(height: AppSizes.sm),
-          _skeleton(28, colors, screenWidth, widthFactor: 0.6),
+          _skeleton(28, screenWidth, widthFactor: 0.6),
           SizedBox(height: AppSizes.sectionSpacing),
           Row(
             children: <Widget>[
               for (int i = 0; i < 3; i++) ...<Widget>[
-                Expanded(child: _skeletonCard(colors)),
+                Expanded(child: _skeletonCard()),
                 if (i < 2) SizedBox(width: AppSizes.sm),
               ],
             ],
           ),
           SizedBox(height: AppSizes.sectionSpacing),
-          _skeleton(20, colors, screenWidth, widthFactor: 0.35),
+          _skeleton(20, screenWidth, widthFactor: 0.35),
           SizedBox(height: AppSizes.lg),
           ...List<Widget>.generate(
             4,
             (int i) => Padding(
               padding: EdgeInsets.only(bottom: AppSizes.md),
-              child: _skeleton(48, colors, screenWidth),
+              child: _skeleton(48, screenWidth),
             ),
           ),
         ],
@@ -115,7 +92,6 @@ class _SummaryLoadingView extends StatelessWidget {
 
   Widget _skeleton(
     double height,
-    AppColorScheme colors,
     double screenWidth, {
     double? widthFactor,
   }) {
@@ -123,17 +99,17 @@ class _SummaryLoadingView extends StatelessWidget {
       width: widthFactor != null ? screenWidth * widthFactor : double.infinity,
       height: height,
       decoration: BoxDecoration(
-        color: colors.skeleton,
+        color: AppColors.skeletonDark,
         borderRadius: BorderRadius.circular(AppSizes.radiusSm),
       ),
     );
   }
 
-  Widget _skeletonCard(AppColorScheme colors) {
+  Widget _skeletonCard() {
     return Container(
       height: 100,
       decoration: BoxDecoration(
-        color: colors.skeleton,
+        color: AppColors.skeletonDark,
         borderRadius: BorderRadius.circular(AppSizes.radiusMd),
       ),
     );
@@ -151,7 +127,7 @@ class _SummaryLoadedView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final AppColorScheme colors = context.appColors;
+    final AppLocalizations l10n = AppLocalizations.of(context);
     final int maxTime = snapshot.appUsage.fold<int>(
       0,
       (int max, AppStat app) => app.totalTimeMillis > max ? app.totalTimeMillis : max,
@@ -166,7 +142,7 @@ class _SummaryLoadedView extends StatelessWidget {
           // Witty headline
           Text(
             _wittyHeadline(),
-            style: AppTextStyles.wittyHeadline.copyWith(color: colors.onSurface),
+            style: AppTextStyles.wittyHeadline,
           ),
           SizedBox(height: AppSizes.sectionSpacing),
           // Stat cards
@@ -175,8 +151,8 @@ class _SummaryLoadedView extends StatelessWidget {
           if (snapshot.appUsage.isNotEmpty) ...<Widget>[
             SizedBox(height: AppSizes.sectionSpacing),
             Text(
-              'Top Offenders',
-              style: AppTextStyles.titleLarge.copyWith(color: colors.onSurface),
+              l10n.topOffenders,
+              style: AppTextStyles.titleLarge,
             ),
             SizedBox(height: AppSizes.md),
             ...snapshot.appUsage.map(
@@ -225,24 +201,25 @@ class _StatCardsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final AppLocalizations l10n = AppLocalizations.of(context);
     return Row(
       children: <Widget>[
         _StatCard(
           icon: Icons.lock_open_rounded,
           value: '${snapshot.unlockCount}',
-          label: 'Unlocks',
+          label: l10n.unlocks,
         ),
         SizedBox(width: AppSizes.sm),
         _StatCard(
           icon: Icons.smartphone_rounded,
-          value: _formatDuration(snapshot.screenOnTime),
-          label: 'Screen Time',
+          value: DurationFormatter.format(snapshot.screenOnTime),
+          label: l10n.screenTime,
         ),
         SizedBox(width: AppSizes.sm),
         _StatCard(
           icon: Icons.notifications_off_rounded,
           value: '${snapshot.notificationDismissals}',
-          label: 'Dismissed',
+          label: l10n.dismissed,
         ),
       ],
     );
@@ -262,7 +239,6 @@ class _StatCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final AppColorScheme colors = context.appColors;
     return Expanded(
       child: Container(
         padding: EdgeInsets.symmetric(
@@ -270,23 +246,27 @@ class _StatCard extends StatelessWidget {
           horizontal: AppSizes.sm,
         ),
         decoration: BoxDecoration(
-          color: colors.surfaceContainer,
+          color: AppColors.surfaceContainerDark,
           borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-          border: Border.all(color: colors.border),
+          border: Border.all(color: AppColors.borderDark),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Icon(icon, color: colors.onSurfaceVariant, size: AppSizes.iconMd),
+            Icon(
+              icon,
+              color: AppColors.onSurfaceVariantDark,
+              size: AppSizes.iconMd,
+            ),
             SizedBox(height: AppSizes.sm),
             Text(
               value,
-              style: AppTextStyles.titleLarge.copyWith(color: colors.onSurface),
+              style: AppTextStyles.titleLarge,
             ),
             SizedBox(height: AppSizes.xs),
             Text(
               label,
-              style: AppTextStyles.labelMedium.copyWith(color: colors.onSurfaceVariant),
+              style: AppTextStyles.labelMedium,
             ),
           ],
         ),
@@ -305,7 +285,6 @@ class _AppUsageBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final AppColorScheme colors = context.appColors;
     final double ratio = maxTime > 0 ? app.totalTimeMillis / maxTime : 0.0;
 
     return Column(
@@ -315,12 +294,12 @@ class _AppUsageBar extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Text(
-              _appLabel(app.packageName),
-              style: AppTextStyles.titleSmall.copyWith(color: colors.onSurface),
+              AppLabelFormatter.fromPackageName(app.packageName),
+              style: AppTextStyles.titleSmall,
             ),
             Text(
-              _formatDuration(app.totalTime),
-              style: AppTextStyles.bodySmall.copyWith(color: colors.onSurfaceVariant),
+              DurationFormatter.format(app.totalTime),
+              style: AppTextStyles.bodySmall,
             ),
           ],
         ),
@@ -330,9 +309,9 @@ class _AppUsageBar extends StatelessWidget {
           child: LinearProgressIndicator(
             value: ratio,
             minHeight: 6,
-            backgroundColor: colors.skeleton,
+            backgroundColor: AppColors.skeletonDark,
             valueColor: AlwaysStoppedAnimation<Color>(
-              ratio > 0.7 ? AppColors.primary : colors.onSurfaceVariant,
+              ratio > 0.7 ? AppColors.primary : AppColors.onSurfaceVariantDark,
             ),
           ),
         ),
@@ -350,20 +329,20 @@ class _MostIgnoredCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final AppColorScheme colors = context.appColors;
+    final AppLocalizations l10n = AppLocalizations.of(context);
     return Container(
       width: double.infinity,
       padding: EdgeInsets.all(AppSizes.lg),
       decoration: BoxDecoration(
-        color: colors.surfaceContainer,
+        color: AppColors.surfaceContainerDark,
         borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-        border: Border.all(color: colors.border),
+        border: Border.all(color: AppColors.borderDark),
       ),
       child: Row(
         children: <Widget>[
           Icon(
             Icons.bedtime_rounded,
-            color: colors.onSurfaceVariant,
+            color: AppColors.onSurfaceVariantDark,
             size: AppSizes.iconLg,
           ),
           SizedBox(width: AppSizes.md),
@@ -372,18 +351,18 @@ class _MostIgnoredCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  'Most Ignored',
-                  style: AppTextStyles.labelMedium.copyWith(color: colors.onSurfaceVariant),
+                  l10n.mostIgnored,
+                  style: AppTextStyles.labelMedium,
                 ),
                 SizedBox(height: AppSizes.xs),
                 Text(
-                  _appLabel(app.packageName),
-                  style: AppTextStyles.titleMedium.copyWith(color: colors.onSurface),
+                  AppLabelFormatter.fromPackageName(app.packageName),
+                  style: AppTextStyles.titleMedium,
                 ),
                 SizedBox(height: AppSizes.xs),
                 Text(
-                  'Only ${_formatDuration(app.totalTime)} today',
-                  style: AppTextStyles.bodySmall.copyWith(color: colors.onSurfaceTertiary),
+                  l10n.onlyToday(DurationFormatter.format(app.totalTime)),
+                  style: AppTextStyles.bodySmall,
                 ),
               ],
             ),
@@ -403,7 +382,7 @@ class _SummaryEmptyView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final AppColorScheme colors = context.appColors;
+    final AppLocalizations l10n = AppLocalizations.of(context);
     return Center(
       child: Padding(
         padding: EdgeInsets.all(AppSizes.pagePadding),
@@ -413,25 +392,24 @@ class _SummaryEmptyView extends StatelessWidget {
             Icon(
               Icons.nightlight_round,
               size: AppSizes.iconXxl,
-              color: colors.onSurfaceTertiary,
+              color: AppColors.onSurfaceTertiaryDark,
             ),
             SizedBox(height: AppSizes.lg),
             Text(
-              'No data yet',
-              style: AppTextStyles.titleLarge.copyWith(color: colors.onSurface),
+              l10n.noDataYet,
+              style: AppTextStyles.titleLarge,
             ),
             SizedBox(height: AppSizes.sm),
             Text(
-              'Grant usage access and come back later\n'
-              'to see your phone\'s daily report.',
+              l10n.emptySubtitle,
               textAlign: TextAlign.center,
-              style: AppTextStyles.bodyMedium.copyWith(color: colors.onSurfaceVariant),
+              style: AppTextStyles.bodyMedium,
             ),
             SizedBox(height: AppSizes.xxl),
             CustomButton.iconText(
               onPressed: () => context.read<SummaryCubit>().load(),
               icon: const Icon(Icons.refresh),
-              label: 'Retry',
+              label: l10n.retry,
             ),
           ],
         ),
@@ -451,7 +429,7 @@ class _SummaryErrorView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final AppColorScheme colors = context.appColors;
+    final AppLocalizations l10n = AppLocalizations.of(context);
     return Center(
       child: Padding(
         padding: EdgeInsets.all(AppSizes.pagePadding),
@@ -465,20 +443,20 @@ class _SummaryErrorView extends StatelessWidget {
             ),
             SizedBox(height: AppSizes.lg),
             Text(
-              'Oops!',
-              style: AppTextStyles.titleLarge.copyWith(color: colors.onSurface),
+              l10n.oops,
+              style: AppTextStyles.titleLarge,
             ),
             SizedBox(height: AppSizes.sm),
             Text(
               error.readableMessage,
               textAlign: TextAlign.center,
-              style: AppTextStyles.bodyMedium.copyWith(color: colors.onSurfaceVariant),
+              style: AppTextStyles.bodyMedium,
             ),
             SizedBox(height: AppSizes.xxl),
             CustomButton.iconText(
               onPressed: () => context.read<SummaryCubit>().load(),
               icon: const Icon(Icons.refresh),
-              label: 'Retry',
+              label: l10n.retry,
             ),
           ],
         ),
