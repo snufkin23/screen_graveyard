@@ -31,7 +31,7 @@ class _HomePageState extends State<HomePage> {
           return CustomScaffold(
             usePadding: false,
             showAppBar: true,
-            title: AppLocalizations.of(context).todaysReport,
+            title: localization.todaysReport,
             body: BlocBuilder<SummaryCubit, SummaryState>(
               builder: (BuildContext context, SummaryState state) {
                 return state.when(
@@ -327,7 +327,6 @@ class MostIgnoredCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final AppLocalizations localization = AppLocalizations.of(context);
     return Container(
       width: double.infinity,
       padding: EdgeInsets.all(AppSizes.lg),
