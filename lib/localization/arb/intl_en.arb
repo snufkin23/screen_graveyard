@@ -29,5 +29,15 @@
   "skipForNow": "Skip for now",
   "allSet": "You're all set!",
   "allSetSubtitle": "Everything is ready.\nLet's get started.",
-  "goToApp": "Go to App"
+  "goToApp": "Go to App",
+  "allSetTitle": "All Set",
+  "back": "Back",
+  "welcomeTitle1": "Particle Discovery",
+  "welcomeDesc1": "Explore the power of particles.\nFast, scalable, and beautiful.",
+  "welcomeTitle2": "Clean Architecture",
+  "welcomeDesc2": "Organized layers for every concern.\nDomain, data, and presentation.",
+  "welcomeTitle3": "Ready to Build",
+  "welcomeDesc3": "All systems initialized.\\nLet's create something remarkable.",
+  "welcomeScreenTitle": "Welcome to Screen Graveyard",
+  "welcomeScreenDesc": "Your phone's daily obituary. Witness the death of your apps."
 }

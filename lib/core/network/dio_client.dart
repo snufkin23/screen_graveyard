@@ -14,11 +14,9 @@ class DioClient {
   }) =>
       _dio.get(path, queryParameters: queryParams);
 
-  Future<Response<dynamic>> post(String path, {dynamic data}) =>
-      _dio.post(path, data: data);
+  Future<Response<dynamic>> post(String path, {dynamic data}) => _dio.post(path, data: data);
 
-  Future<Response<dynamic>> put(String path, {dynamic data}) =>
-      _dio.put(path, data: data);
+  Future<Response<dynamic>> put(String path, {dynamic data}) => _dio.put(path, data: data);
 
   Future<Response<dynamic>> delete(String path) => _dio.delete(path);
 }

@@ -5,13 +5,11 @@ import 'package:injectable/injectable.dart';
 class SecureStorageService {
   SecureStorageService()
       : _storage = const FlutterSecureStorage(
-          iOptions:
-              IOSOptions(accessibility: KeychainAccessibility.first_unlock),
+          iOptions: IOSOptions(accessibility: KeychainAccessibility.first_unlock),
         );
   final FlutterSecureStorage _storage;
 
-  Future<void> write({required String key, required String value}) async =>
-      _storage.write(key: key, value: value);
+  Future<void> write({required String key, required String value}) async => _storage.write(key: key, value: value);
 
   Future<String?> read({required String key}) async => _storage.read(key: key);
 

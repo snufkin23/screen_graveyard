@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:screen_graveyard/core/constants/sizes.dart';
-import 'package:screen_graveyard/core/theme/app_colors.dart';
+import 'package:screen_graveyard/core/extensions/theme_context.dart';
 import 'package:screen_graveyard/core/theme/app_text_styles.dart';
 
 enum InputType { text, password, number, email, phone, multiline }
@@ -118,8 +118,7 @@ class CustomTextFormField extends StatefulWidget {
         onChanged: onChanged,
         keyboardType: TextInputType.number,
         maxLength: maxLength,
-        inputFormatters: inputFormatters ??
-            <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
+        inputFormatters: inputFormatters ?? <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
         enabled: enabled ?? true,
       );
 
@@ -250,11 +249,9 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
     if (widget.obscureText) {
       return IconButton(
         icon: Icon(
-          _obscureText
-              ? Icons.visibility_outlined
-              : Icons.visibility_off_outlined,
+          _obscureText ? Icons.visibility_outlined : Icons.visibility_off_outlined,
           size: AppSizes.iconMd,
-          color: AppColors.lightSubtext,
+          color: context.colors.onSurfaceVariant,
         ),
         onPressed: _toggleObscure,
       );
@@ -277,7 +274,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
       return Icon(
         widget.prefixIcon,
         size: AppSizes.iconMd,
-        color: AppColors.lightSubtext,
+        color: context.colors.onSurfaceVariant,
       );
     }
     return null;

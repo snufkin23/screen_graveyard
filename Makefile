@@ -7,6 +7,9 @@ gen:
 	dart run build_runner build --delete-conflicting-outputs
 	dart run intl_utils:generate
 
+local:
+	dart run intl_utils:generate
+
 watch:
 	dart run build_runner watch --delete-conflicting-outputs
 
@@ -22,7 +25,7 @@ clean:
 	flutter clean && flutter pub get
 
 format:
-	dart format lib --line-length 80
+	dart format lib .
 
 lint:
 	flutter analyze
@@ -46,3 +49,13 @@ setup: clean splash icons gen
 
 # —————————————————————————————————————————
 .PHONY: gen watch splash icons clean format lint test run build-apk build-ios setup
+
+-include Makefile.local
+
+qa: distribute-qa
+
+dev: distribute-dev
+
+client: distribute-client
+
+aab: distribute-aab

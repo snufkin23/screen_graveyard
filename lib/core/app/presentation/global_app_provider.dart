@@ -7,8 +7,34 @@ import 'package:screen_graveyard/core/app/presentation/blocs/app_startup/app_sta
 import 'package:screen_graveyard/core/app/presentation/blocs/app_theme/app_theme_cubit.dart';
 import 'package:screen_graveyard/core/app/presentation/blocs/notification/notification_cubit.dart';
 import 'package:screen_graveyard/core/di/injection.dart';
-import 'package:screen_graveyard/core/storage/local_storage.dart';
-import 'package:screen_graveyard/features/onboarding/presentation/blocs/onboarding_cubit.dart';
+
+class GlobalAppConfig {
+  const GlobalAppConfig({required this.locale, required this.themeMode});
+  final Locale locale;
+  final ThemeMode themeMode;
+}
+
+class GlobalConfigProvider extends InheritedWidget {
+  const GlobalConfigProvider({
+    required this.config,
+    required super.child,
+    super.key,
+  });
+  final GlobalAppConfig config;
+
+  static GlobalAppConfig of(BuildContext context) {
+    final GlobalConfigProvider? provider = context.dependOnInheritedWidgetOfExactType<GlobalConfigProvider>();
+    if (provider == null) {
+      throw Exception('GlobalConfigProvider not found in context');
+    }
+    return provider.config;
+  }
+
+  @override
+  bool updateShouldNotify(GlobalConfigProvider oldWidget) {
+    return config.locale != oldWidget.config.locale || config.themeMode != oldWidget.config.themeMode;
+  }
+}
 
 class GlobalAppProvider extends StatelessWidget {
   const GlobalAppProvider({required this.child, super.key});
@@ -19,23 +45,34 @@ class GlobalAppProvider extends StatelessWidget {
     return MultiBlocProvider(
       providers: <SingleChildWidget>[
         BlocProvider<AppStartupCubit>(
-          create: (_) => AppStartupCubit(getIt<LocalStorage>()),
+          create: (_) => getIt<AppStartupCubit>(),
         ),
         BlocProvider<AppThemeCubit>(
-          create: (_) => AppThemeCubit(getIt<LocalStorage>()),
+          create: (_) => getIt<AppThemeCubit>(),
         ),
         BlocProvider<AppLocaleCubit>(
           create: (_) => getIt<AppLocaleCubit>(),
         ),
-        BlocProvider<AppPermissionCubit>(create: (_) => AppPermissionCubit()),
+        BlocProvider<AppPermissionCubit>(create: (_) => getIt<AppPermissionCubit>()),
         BlocProvider<NotificationCubit>(
           create: (_) => getIt<NotificationCubit>(),
         ),
-        BlocProvider<OnboardingCubit>(
-          create: (_) => OnboardingCubit(getIt<LocalStorage>())..checkStatus(),
-        ),
       ],
-      child: child,
+      child: BlocBuilder<AppThemeCubit, ThemeMode>(
+        builder: (BuildContext context, ThemeMode themeMode) {
+          return BlocBuilder<AppLocaleCubit, AppLocale>(
+            builder: (BuildContext context, AppLocale appLocale) {
+              return GlobalConfigProvider(
+                config: GlobalAppConfig(
+                  locale: appLocale.locale,
+                  themeMode: themeMode,
+                ),
+                child: child,
+              );
+            },
+          );
+        },
+      ),
     );
   }
 }

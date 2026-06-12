@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:screen_graveyard/core/constants/sizes.dart';
+import 'package:screen_graveyard/core/extensions/theme_context.dart';
 import 'package:screen_graveyard/core/theme/app_colors.dart';
 import 'package:screen_graveyard/core/theme/app_text_styles.dart';
 import 'package:screen_graveyard/core/widgets/custom_button.dart';
@@ -144,7 +145,7 @@ class _ConfirmDialog extends StatelessWidget {
             Text(
               message,
               style: AppTextStyles.bodyMedium.copyWith(
-                color: AppColors.lightSubtext,
+                color: context.colors.onSurfaceVariant,
               ),
             ),
             SizedBox(height: AppSizes.xxl),
@@ -161,8 +162,7 @@ class _ConfirmDialog extends StatelessWidget {
                 Expanded(
                   child: CustomButton.text(
                     label: confirmLabel,
-                    bgColor: confirmColor ??
-                        (isDangerous ? AppColors.error : AppColors.primary),
+                    bgColor: confirmColor ?? (isDangerous ? AppColors.error : AppColors.primary),
                     onPressed: () => Navigator.of(context).pop(true),
                     expanded: true,
                   ),
@@ -213,7 +213,7 @@ class _InfoDialog extends StatelessWidget {
             Text(
               message,
               style: AppTextStyles.bodyMedium.copyWith(
-                color: AppColors.lightSubtext,
+                color: context.colors.onSurfaceVariant,
               ),
               textAlign: TextAlign.center,
             ),
@@ -301,7 +301,7 @@ class _PromptDialogState extends State<_PromptDialog> {
                 Text(
                   widget.message!,
                   style: AppTextStyles.bodyMedium.copyWith(
-                    color: AppColors.lightSubtext,
+                    color: context.colors.onSurfaceVariant,
                   ),
                 ),
               ],

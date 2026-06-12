@@ -18,7 +18,9 @@ class ThemeSelector extends StatelessWidget {
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surface,
             borderRadius: BorderRadius.circular(AppSizes.radiusFull),
-            border: Border.all(color: AppColors.lightDivider),
+            border: Border.all(
+              color: AppColors.borderDark.withValues(alpha: 0.5),
+            ),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -42,6 +44,7 @@ class _ThemeOption extends StatelessWidget {
     required this.mode,
     required this.current,
   });
+
   final ThemeMode mode;
   final ThemeMode current;
 
@@ -100,8 +103,7 @@ class _ThemeOption extends StatelessWidget {
               Text(
                 _label,
                 style: AppTextStyles.labelSmall.copyWith(
-                  color:
-                      _isSelected ? Colors.white : theme.colorScheme.onSurface,
+                  color: _isSelected ? Colors.white : theme.colorScheme.onSurface,
                   fontWeight: _isSelected ? FontWeight.w700 : FontWeight.w500,
                 ),
               ),

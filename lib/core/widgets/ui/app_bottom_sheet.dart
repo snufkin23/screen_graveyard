@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:screen_graveyard/core/constants/sizes.dart';
+import 'package:screen_graveyard/core/extensions/theme_context.dart';
 import 'package:screen_graveyard/core/theme/app_colors.dart';
+
 import 'package:screen_graveyard/core/theme/app_text_styles.dart';
 import 'package:screen_graveyard/core/widgets/custom_button.dart';
 import 'package:screen_graveyard/core/widgets/custom_outlined_button.dart';
@@ -88,8 +90,7 @@ class AppBottomSheet {
           minChildSize: minSize,
           maxChildSize: maxSize,
           expand: false,
-          builder: (_, ScrollController scrollController) =>
-              _BottomSheetContainer(
+          builder: (_, ScrollController scrollController) => _BottomSheetContainer(
             showDragHandle: showDragHandle,
             child: Column(
               children: <Widget>[
@@ -153,7 +154,7 @@ class _BottomSheetContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
+        color: context.colors.surface,
         borderRadius: BorderRadius.vertical(
           top: Radius.circular(AppSizes.radiusXl),
         ),
@@ -167,7 +168,7 @@ class _BottomSheetContainer extends StatelessWidget {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: AppColors.lightDivider,
+                color: context.colors.outlineVariant,
                 borderRadius: BorderRadius.circular(AppSizes.radiusFull),
               ),
             ),
@@ -231,17 +232,12 @@ class _ListBottomSheet<T> extends StatelessWidget {
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: items.length,
-            separatorBuilder: (_, __) =>
-                showDividers ? const Divider(height: 1) : const SizedBox(),
+            separatorBuilder: (_, __) => showDividers ? const Divider(height: 1) : const SizedBox(),
             itemBuilder: (_, int index) {
               final AppBottomSheetItem<T> item = items[index];
-              final Color color = item.isDestructive
-                  ? AppColors.error
-                  : (item.color ?? Theme.of(context).colorScheme.onSurface);
+              final Color color = item.isDestructive ? AppColors.error : (item.color ?? context.colors.onSurface);
               return ListTile(
-                leading: item.icon != null
-                    ? Icon(item.icon, color: color, size: AppSizes.iconMd)
-                    : null,
+                leading: item.icon != null ? Icon(item.icon, color: color, size: AppSizes.iconMd) : null,
                 title: Text(
                   item.label,
                   style: AppTextStyles.bodyLarge.copyWith(color: color),
@@ -293,7 +289,7 @@ class _ConfirmBottomSheet extends StatelessWidget {
           Text(
             message,
             style: AppTextStyles.bodyMedium.copyWith(
-              color: AppColors.lightSubtext,
+              color: context.colors.onSurfaceVariant,
             ),
             textAlign: TextAlign.center,
           ),
