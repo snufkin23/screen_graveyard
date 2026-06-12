@@ -7,7 +7,6 @@ import 'package:screen_graveyard/core/app/presentation/blocs/app_startup/app_sta
 import 'package:screen_graveyard/core/app/presentation/blocs/app_theme/app_theme_cubit.dart';
 import 'package:screen_graveyard/core/app/presentation/blocs/notification/notification_cubit.dart';
 import 'package:screen_graveyard/core/di/injection.dart';
-import 'package:screen_graveyard/core/storage/local_storage.dart';
 
 class GlobalAppConfig {
   const GlobalAppConfig({required this.locale, required this.themeMode});
@@ -46,15 +45,15 @@ class GlobalAppProvider extends StatelessWidget {
     return MultiBlocProvider(
       providers: <SingleChildWidget>[
         BlocProvider<AppStartupCubit>(
-          create: (_) => AppStartupCubit(getIt<LocalStorage>()),
+          create: (_) => getIt<AppStartupCubit>(),
         ),
         BlocProvider<AppThemeCubit>(
-          create: (_) => AppThemeCubit(getIt<LocalStorage>()),
+          create: (_) => getIt<AppThemeCubit>(),
         ),
         BlocProvider<AppLocaleCubit>(
           create: (_) => getIt<AppLocaleCubit>(),
         ),
-        BlocProvider<AppPermissionCubit>(create: (_) => AppPermissionCubit()),
+        BlocProvider<AppPermissionCubit>(create: (_) => getIt<AppPermissionCubit>()),
         BlocProvider<NotificationCubit>(
           create: (_) => getIt<NotificationCubit>(),
         ),

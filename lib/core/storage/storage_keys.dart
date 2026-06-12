@@ -4,6 +4,7 @@ abstract class StorageKeys {
 
   // Keys
   static const String hasSeenOnboarding = 'has_seen_onboarding';
+  static const String isWelcome = 'is_welcome';
   static const String isLoggedIn = 'is_logged_in';
 
   static const String accessToken = '__ACCESS_TOKEN__';

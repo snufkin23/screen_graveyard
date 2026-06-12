@@ -6,7 +6,9 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:screen_graveyard/core/constants/app_constants.dart';
 import 'package:screen_graveyard/core/storage/local_storage.dart';
+import 'package:screen_graveyard/core/storage/storage.dart';
 import 'package:screen_graveyard/features/onboarding/domain/model/onboarding_step.dart';
+import 'package:screen_graveyard/features/welcome/presentation/domain/repository/welcome_repository.dart';
 
 part 'app_startup_cubit.freezed.dart';
 part 'app_startup_state.dart';
@@ -18,14 +20,19 @@ part 'app_startup_state.dart';
 ///
 @injectable
 class AppStartupCubit extends Cubit<AppStartupState> {
-  AppStartupCubit(this._storage) : super(const AppStartupState.initial()) {
+  AppStartupCubit(this._storage, this._welcomeRepository) : super(const AppStartupState.welcome()) {
     _init();
   }
+
   final LocalStorage _storage;
+  final WelcomeRepository _welcomeRepository;
 
   Future<void> _init() async {
-    await Future<void>.microtask(() async {
+    final bool hasBeenWelcomed = await _welcomeRepository.isWelcome();
+
+    if (hasBeenWelcomed) {
       final String? storedStepName = _storage.get<String>(AppConstants.onboardingStepKey);
+
       final OnboardingStep step = OnboardingStep.fromString(storedStepName);
 
       if (step == OnboardingStep.completed) {
@@ -33,8 +40,10 @@ class AppStartupCubit extends Cubit<AppStartupState> {
       } else {
         emit(const AppStartupState.onboarding());
       }
+    } else {
+      emit(const AppStartupState.welcome());
+    }
 
-      FlutterNativeSplash.remove();
-    });
+    FlutterNativeSplash.remove();
   }
 }

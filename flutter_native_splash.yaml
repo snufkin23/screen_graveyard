@@ -1,6 +1,6 @@
 flutter_native_splash:
   # Background color
-  color: "#0D0D0F"
+  color: "#09090A"
 
   # Splash image
   image: assets/images/app/splash.png
@@ -10,9 +10,9 @@ flutter_native_splash:
 
   # Android 12+ specific (has its own splash API)
   android_12:
-    color: "#0D0D0F"
+    color: "#09090A"
     image: assets/images/app/splash.png
-    icon_background_color: "#0D0D0F"
+    icon_background_color: "#09090A"
 
   # Platforms
   ios: true

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:screen_graveyard/core/di/injection.dart';
-import 'package:screen_graveyard/core/router/app_router.gr.dart';
+
 import 'package:screen_graveyard/core/theme/app_colors.dart';
 import 'package:screen_graveyard/core/theme/app_text_styles.dart';
 import 'package:screen_graveyard/core/widgets/widgets.dart';
@@ -17,47 +17,39 @@ class WelcomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<WelcomeCubit>(
-      create: (BuildContext context) => getIt<WelcomeCubit>(),
-      child: BlocListener<WelcomeCubit, WelcomeState>(
-        listener: (BuildContext context, WelcomeState state) {
-          state.maybeWhen(
-            completed: () => context.router.replace(const OnboardingRoute()),
-            orElse: () {},
-          );
-        },
-        child: CustomScaffold(
-          body: SafeArea(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24.w),
-              child: Column(
-                children: <Widget>[
-                  const Spacer(),
-                  // Brand Icon/Illustration
-                  const Icon(
-                    Icons.auto_awesome_rounded,
-                    size: 120,
-                    color: AppColors.primary,
-                  ),
-                  SizedBox(height: 48.h),
-                  Text(
-                    localization.welcomeScreenTitle,
-                    textAlign: TextAlign.center,
-                    style: AppTextStyles.displayLarge,
-                  ),
-                  SizedBox(height: 16.h),
-                  Text(
-                    localization.welcomeScreenDesc,
-                    textAlign: TextAlign.center,
-                    style: AppTextStyles.bodyLarge,
-                  ),
-                  const Spacer(),
-                  CustomButton(
-                    label: localization.getStarted,
-                    onPressed: () => context.read<WelcomeCubit>().complete(),
-                  ),
-                  SizedBox(height: 32.h),
-                ],
-              ),
+      create: (_) => getIt<WelcomeCubit>(),
+      child: CustomScaffold(
+        body: SafeArea(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 24.w),
+            child: Column(
+              children: <Widget>[
+                const Spacer(),
+                // Brand Icon/Illustration
+                const Icon(
+                  Icons.auto_awesome_rounded,
+                  size: 120,
+                  color: AppColors.primary,
+                ),
+                SizedBox(height: 48.h),
+                Text(
+                  localization.welcomeScreenTitle,
+                  textAlign: TextAlign.center,
+                  style: AppTextStyles.displayLarge,
+                ),
+                SizedBox(height: 16.h),
+                Text(
+                  localization.welcomeScreenDesc,
+                  textAlign: TextAlign.center,
+                  style: AppTextStyles.bodyLarge,
+                ),
+                const Spacer(),
+                CustomButton(
+                  label: localization.getStarted,
+                  onPressed: () => context.read<WelcomeCubit>().setWelcome(),
+                ),
+                SizedBox(height: 32.h),
+              ],
             ),
           ),
         ),
