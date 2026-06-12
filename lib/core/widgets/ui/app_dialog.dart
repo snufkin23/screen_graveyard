@@ -162,8 +162,7 @@ class _ConfirmDialog extends StatelessWidget {
                 Expanded(
                   child: CustomButton.text(
                     label: confirmLabel,
-                    bgColor: confirmColor ??
-                        (isDangerous ? AppColors.error : AppColors.primary),
+                    bgColor: confirmColor ?? (isDangerous ? AppColors.error : AppColors.primary),
                     onPressed: () => Navigator.of(context).pop(true),
                     expanded: true,
                   ),

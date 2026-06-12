@@ -1,41 +1,29 @@
 part of 'app_permission_cubit.dart';
 
-enum AppPermission {
-  camera,
-  gallery,
-  location,
-  locationAlways,
-  microphone,
-  notification,
-  storage;
+enum AppPermissionStep {
+  introduction,
+  about,
+  permission,
+  completed;
 
-  bool get isCamera => this == AppPermission.camera;
-  bool get isGallery => this == AppPermission.gallery;
-  bool get isLocation => this == AppPermission.location;
-  bool get isLocationAlways => this == AppPermission.locationAlways;
-  bool get isMicrophone => this == AppPermission.microphone;
-  bool get isNotification => this == AppPermission.notification;
-  bool get isStorage => this == AppPermission.storage;
-}
-
-enum AppPermissionStatus {
-  initial,
-  granted,
-  denied,
-  permanentlyDenied,
-  restricted;
-
-  bool get isInitial => this == AppPermissionStatus.initial;
-  bool get isGranted => this == AppPermissionStatus.granted;
-  bool get isDenied => this == AppPermissionStatus.denied;
-  bool get isPermanentlyDenied => this == AppPermissionStatus.permanentlyDenied;
-  bool get isRestricted => this == AppPermissionStatus.restricted;
+  bool get isIntroduction => this == AppPermissionStep.introduction;
+  bool get isAbout => this == AppPermissionStep.about;
+  bool get isPermission => this == AppPermissionStep.permission;
+  bool get isCompleted => this == AppPermissionStep.completed;
 }
 
 @freezed
-abstract class AppPermissionState with _$AppPermissionState {
+sealed class AppPermissionState with _$AppPermissionState {
   const factory AppPermissionState({
-    @Default(<AppPermission, AppPermissionStatus>{})
-    Map<AppPermission, AppPermissionStatus> statuses,
+    @Default(AppPermissionStep.introduction) AppPermissionStep step,
+    @Default(PermissionStatus.denied) PermissionStatus notification,
+    @Default(PermissionStatus.denied) PermissionStatus usageAccess,
+    @Default(PermissionStatus.denied) PermissionStatus storage,
   }) = _AppPermissionState;
+
+  const AppPermissionState._();
+
+  bool get allPermissionsGranted => notification.isGranted && usageAccess.isGranted && storage.isGranted;
+
+  bool get canContinue => !step.isPermission || allPermissionsGranted;
 }

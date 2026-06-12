@@ -131,18 +131,13 @@ class _OnboardingPageState extends State<OnboardingPage> {
                               if (currentIndex > 0)
                                 CustomOutlinedButton(
                                   label: localization.back,
-                                  onPressed: () => context
-                                      .read<OnboardingCubit>()
-                                      .previous(),
+                                  onPressed: () => context.read<OnboardingCubit>().previous(),
                                 )
                               else
                                 const SizedBox.shrink(),
                               CustomButton(
-                                label: currentIndex == 2
-                                    ? localization.getStarted
-                                    : localization.continueButton,
-                                onPressed: () =>
-                                    context.read<OnboardingCubit>().next(),
+                                label: currentIndex == 2 ? localization.getStarted : localization.continueButton,
+                                onPressed: () => context.read<OnboardingCubit>().next(),
                               ),
                             ],
                           ),

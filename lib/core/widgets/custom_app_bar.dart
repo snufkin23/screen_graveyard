@@ -60,9 +60,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       titleSpacing: 0,
       centerTitle: centerTitle,
       systemOverlayStyle: systemOverlayStyle ??
-          (theme.brightness == Brightness.dark
-              ? SystemUiOverlayStyle.light
-              : SystemUiOverlayStyle.dark),
+          (theme.brightness == Brightness.dark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark),
       leading: _buildLeading(context, canPop),
       leadingWidth: leadingWidth ?? (showLeading ? 64 : 0),
       title: Padding(

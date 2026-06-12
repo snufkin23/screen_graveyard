@@ -25,7 +25,7 @@ clean:
 	flutter clean && flutter pub get
 
 format:
-	dart format lib --line-length 80
+	dart format lib .
 
 lint:
 	flutter analyze

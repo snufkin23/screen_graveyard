@@ -14,8 +14,7 @@ import 'package:screen_graveyard/firebase_options.dart';
 Future<void> main() async {
   await runZonedGuarded(
     () async {
-      final WidgetsBinding widgetsBinding =
-          WidgetsFlutterBinding.ensureInitialized();
+      final WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
 
       // ── Splash ─────────────────────────────────────────────────
       FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);

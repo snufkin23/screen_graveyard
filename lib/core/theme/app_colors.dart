@@ -6,42 +6,31 @@ abstract class AppColors {
   const AppColors._();
 
   // ── Primary & Secondary ───────────────────────────────────────────────────
-  static const Color primary =
-      Color(0xFF9B8FFF); // Lavender purple (tombstone accent)
-  static const Color primaryLight =
-      Color(0xFFB8B0FF); // Lighter purple for hover
+  static const Color primary = Color(0xFF9B8FFF); // Lavender purple (tombstone accent)
+  static const Color primaryLight = Color(0xFFB8B0FF); // Lighter purple for hover
   static const Color primaryDark = Color(0xFF6B5FCC); // Darker purple for press
 
   // ── Surfaces ──────────────────────────────────────────────────────────────
   // Dark mode (primary theme)
   static const Color surfaceDark = Color(0xFF0D0D0F); // Near-black background
-  static const Color surfaceContainerDark =
-      Color(0xFF2E2E3E); // Card/elevated surface
-  static const Color surfaceContainerHighDark =
-      Color(0xFF3A3A4A); // Hover state
+  static const Color surfaceContainerDark = Color(0xFF2E2E3E); // Card/elevated surface
+  static const Color surfaceContainerHighDark = Color(0xFF3A3A4A); // Hover state
 
   // Light mode (fallback, minimal use)
   static const Color surfaceLight = Color(0xFFFBFBFB); // Off-white background
-  static const Color surfaceContainerLight =
-      Color(0xFFF5F5F7); // Card/elevated surface
-  static const Color surfaceContainerHighLight =
-      Color(0xFFEFEFF2); // Hover state
+  static const Color surfaceContainerLight = Color(0xFFF5F5F7); // Card/elevated surface
+  static const Color surfaceContainerHighLight = Color(0xFFEFEFF2); // Hover state
 
   // ── Text Colors ───────────────────────────────────────────────────────────
   // Dark mode
-  static const Color onSurfaceDark =
-      Color(0xFFF0EEFF); // Primary text (off-white)
-  static const Color onSurfaceVariantDark =
-      Color(0xFFB8B0FF); // Secondary text (muted purple)
-  static const Color onSurfaceTertiaryDark =
-      Color(0xFF555566); // Tertiary text (dim gray)
+  static const Color onSurfaceDark = Color(0xFFF0EEFF); // Primary text (off-white)
+  static const Color onSurfaceVariantDark = Color(0xFFB8B0FF); // Secondary text (muted purple)
+  static const Color onSurfaceTertiaryDark = Color(0xFF555566); // Tertiary text (dim gray)
 
   // Light mode
   static const Color onSurfaceLight = Color(0xFF1A1A1F); // Primary text (dark)
-  static const Color onSurfaceVariantLight =
-      Color(0xFF555566); // Secondary text (gray)
-  static const Color onSurfaceTertiaryLight =
-      Color(0xFF9B9BA8); // Tertiary text (light gray)
+  static const Color onSurfaceVariantLight = Color(0xFF555566); // Secondary text (gray)
+  static const Color onSurfaceTertiaryLight = Color(0xFF9B9BA8); // Tertiary text (light gray)
 
   // ── Semantic ───────────────────────────────────────────────────────────────
   static const Color error = Color(0xFFFF6B6B); // Red for errors
@@ -63,8 +52,7 @@ abstract class AppColors {
 
   // ── Skeleton / Loading ────────────────────────────────────────────────────
   static const Color skeletonDark = Color(0xFF1F1F28); // Shimmer base on dark
-  static const Color skeletonHighlightDark =
-      Color(0xFF2A2A34); // Shimmer highlight
+  static const Color skeletonHighlightDark = Color(0xFF2A2A34); // Shimmer highlight
 
   static const Color skeletonLight = Color(0xFFE5E5E7);
   static const Color skeletonHighlightLight = Color(0xFFF5F5F7);
@@ -76,9 +64,8 @@ abstract class AppColors {
 
 /// Convenience extension to get colors based on brightness
 extension AppColorsX on BuildContext {
-  AppColorScheme get appColors => Theme.of(this).brightness == Brightness.dark
-      ? const AppColorSchemeDark()
-      : const AppColorSchemeLight();
+  AppColorScheme get appColors =>
+      Theme.of(this).brightness == Brightness.dark ? const AppColorSchemeDark() : const AppColorSchemeLight();
 }
 
 /// Abstract interface for theme-aware colors

@@ -119,13 +119,11 @@ class CustomButton extends StatelessWidget {
 
     final ThemeData theme = Theme.of(context);
 
-    final Color effectiveBg = disabled
-        ? theme.colorScheme.onSurface.withValues(alpha: 0.12)
-        : (bgColor ?? theme.colorScheme.primary);
+    final Color effectiveBg =
+        disabled ? theme.colorScheme.onSurface.withValues(alpha: 0.12) : (bgColor ?? theme.colorScheme.primary);
 
-    final Color effectiveFg = disabled
-        ? theme.colorScheme.onSurface.withValues(alpha: 0.38)
-        : (fgColor ?? theme.colorScheme.onPrimary);
+    final Color effectiveFg =
+        disabled ? theme.colorScheme.onSurface.withValues(alpha: 0.38) : (fgColor ?? theme.colorScheme.onPrimary);
 
     final Widget content = isLoading
         ? SizedBox(

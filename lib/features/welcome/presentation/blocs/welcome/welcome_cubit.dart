@@ -17,8 +17,7 @@ class WelcomeCubit extends Cubit<WelcomeState> {
   final LocalStorage _storage;
 
   void _loadPersistedState() {
-    final String? storedStatusName =
-        _storage.get<String>(AppConstants.welcomeStatusKey);
+    final String? storedStatusName = _storage.get<String>(AppConstants.welcomeStatusKey);
     final WelcomeStatus status = WelcomeStatus.fromString(storedStatusName);
     emit(_mapStatusToState(status));
   }

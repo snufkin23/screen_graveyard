@@ -24,8 +24,7 @@ class GlobalConfigProvider extends InheritedWidget {
   final GlobalAppConfig config;
 
   static GlobalAppConfig of(BuildContext context) {
-    final GlobalConfigProvider? provider =
-        context.dependOnInheritedWidgetOfExactType<GlobalConfigProvider>();
+    final GlobalConfigProvider? provider = context.dependOnInheritedWidgetOfExactType<GlobalConfigProvider>();
     if (provider == null) {
       throw Exception('GlobalConfigProvider not found in context');
     }
@@ -34,8 +33,7 @@ class GlobalConfigProvider extends InheritedWidget {
 
   @override
   bool updateShouldNotify(GlobalConfigProvider oldWidget) {
-    return config.locale != oldWidget.config.locale ||
-        config.themeMode != oldWidget.config.themeMode;
+    return config.locale != oldWidget.config.locale || config.themeMode != oldWidget.config.themeMode;
   }
 }
 

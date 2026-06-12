@@ -134,13 +134,11 @@ class CustomOutlinedButton extends StatelessWidget {
 
     final ThemeData theme = Theme.of(context);
 
-    final Color effectiveBorderColor = disabled
-        ? theme.colorScheme.onSurface.withValues(alpha: 0.12)
-        : (borderColor ?? AppColors.primary);
+    final Color effectiveBorderColor =
+        disabled ? theme.colorScheme.onSurface.withValues(alpha: 0.12) : (borderColor ?? AppColors.primary);
 
-    final Color effectiveFg = disabled
-        ? theme.colorScheme.onSurface.withValues(alpha: 0.38)
-        : (fgColor ?? AppColors.primary);
+    final Color effectiveFg =
+        disabled ? theme.colorScheme.onSurface.withValues(alpha: 0.38) : (fgColor ?? AppColors.primary);
 
     final Color effectiveFill = fillColor ?? Colors.transparent;
 
