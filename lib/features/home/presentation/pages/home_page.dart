@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:screen_graveyard/core/constants/sizes.dart';
 import 'package:screen_graveyard/core/di/injection.dart';
 import 'package:screen_graveyard/core/error/app_exception.dart';
+import 'package:screen_graveyard/core/extensions/theme_context.dart';
 import 'package:screen_graveyard/core/helpers/helpers.dart';
 import 'package:screen_graveyard/core/theme/app_colors.dart';
 import 'package:screen_graveyard/core/theme/app_text_styles.dart';
@@ -35,10 +36,10 @@ class _HomePageState extends State<HomePage> {
               builder: (BuildContext context, SummaryState state) {
                 return state.when(
                   initial: () => const SizedBox.shrink(),
-                  loading: () => const _SummaryLoadingView(),
-                  loaded: (DailySnapshot snapshot) => _SummaryLoadedView(snapshot: snapshot),
-                  empty: () => const _SummaryEmptyView(),
-                  error: (AppException error) => _SummaryErrorView(error: error),
+                  loading: () => const SummaryLoadingView(),
+                  loaded: (DailySnapshot snapshot) => SummaryLoadedView(snapshot: snapshot),
+                  empty: () => const SummaryEmptyView(),
+                  error: (AppException error) => SummaryErrorView(error: error),
                 );
               },
             ),
@@ -53,19 +54,18 @@ class _HomePageState extends State<HomePage> {
 // LOADING VIEW
 // ════════════════════════════════════════════════════════════════════════
 
-class _SummaryLoadingView extends StatelessWidget {
-  const _SummaryLoadingView();
+class SummaryLoadingView extends StatelessWidget {
+  const SummaryLoadingView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final double screenWidth = MediaQuery.of(context).size.width;
     return SingleChildScrollView(
       padding: EdgeInsets.all(AppSizes.pagePadding),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           SizedBox(height: AppSizes.sm),
-          _skeleton(28, screenWidth, widthFactor: 0.6),
+          _skeleton(28, context.width, widthFactor: 0.6),
           SizedBox(height: AppSizes.sectionSpacing),
           Row(
             children: <Widget>[
@@ -76,13 +76,13 @@ class _SummaryLoadingView extends StatelessWidget {
             ],
           ),
           SizedBox(height: AppSizes.sectionSpacing),
-          _skeleton(20, screenWidth, widthFactor: 0.35),
+          _skeleton(20, context.width, widthFactor: 0.35),
           SizedBox(height: AppSizes.lg),
           ...List<Widget>.generate(
             4,
             (int i) => Padding(
               padding: EdgeInsets.only(bottom: AppSizes.md),
-              child: _skeleton(48, screenWidth),
+              child: _skeleton(48, context.width),
             ),
           ),
         ],
@@ -120,14 +120,13 @@ class _SummaryLoadingView extends StatelessWidget {
 // LOADED VIEW
 // ════════════════════════════════════════════════════════════════════════
 
-class _SummaryLoadedView extends StatelessWidget {
-  const _SummaryLoadedView({required this.snapshot});
+class SummaryLoadedView extends StatelessWidget {
+  const SummaryLoadedView({required this.snapshot, super.key});
 
   final DailySnapshot snapshot;
 
   @override
   Widget build(BuildContext context) {
-    final AppLocalizations l10n = AppLocalizations.of(context);
     final int maxTime = snapshot.appUsage.fold<int>(
       0,
       (int max, AppStat app) => app.totalTimeMillis > max ? app.totalTimeMillis : max,
@@ -146,12 +145,12 @@ class _SummaryLoadedView extends StatelessWidget {
           ),
           SizedBox(height: AppSizes.sectionSpacing),
           // Stat cards
-          _StatCardsRow(snapshot: snapshot),
+          StatCardsRow(snapshot: snapshot),
           // Top offenders
           if (snapshot.appUsage.isNotEmpty) ...<Widget>[
             SizedBox(height: AppSizes.sectionSpacing),
             Text(
-              l10n.topOffenders,
+              localization.topOffenders,
               style: AppTextStyles.titleLarge,
             ),
             SizedBox(height: AppSizes.md),
@@ -167,7 +166,7 @@ class _SummaryLoadedView extends StatelessWidget {
               snapshot.mostIgnoredApp != snapshot.mostUsedApp &&
               snapshot.appUsage.length > 1) ...<Widget>[
             SizedBox(height: AppSizes.sectionSpacing),
-            _MostIgnoredCard(app: snapshot.mostIgnoredApp!),
+            MostIgnoredCard(app: snapshot.mostIgnoredApp!),
           ],
           // Ad banner
           SizedBox(height: AppSizes.sectionSpacing),
@@ -194,32 +193,31 @@ class _SummaryLoadedView extends StatelessWidget {
 
 // ── Stat Cards Row ─────────────────────────────────────────────────────
 
-class _StatCardsRow extends StatelessWidget {
-  const _StatCardsRow({required this.snapshot});
+class StatCardsRow extends StatelessWidget {
+  const StatCardsRow({required this.snapshot, super.key});
 
   final DailySnapshot snapshot;
 
   @override
   Widget build(BuildContext context) {
-    final AppLocalizations l10n = AppLocalizations.of(context);
     return Row(
       children: <Widget>[
         _StatCard(
           icon: Icons.lock_open_rounded,
           value: '${snapshot.unlockCount}',
-          label: l10n.unlocks,
+          label: localization.unlocks,
         ),
         SizedBox(width: AppSizes.sm),
         _StatCard(
           icon: Icons.smartphone_rounded,
           value: DurationFormatter.format(snapshot.screenOnTime),
-          label: l10n.screenTime,
+          label: localization.screenTime,
         ),
         SizedBox(width: AppSizes.sm),
         _StatCard(
           icon: Icons.notifications_off_rounded,
           value: '${snapshot.notificationDismissals}',
-          label: l10n.dismissed,
+          label: localization.dismissed,
         ),
       ],
     );
@@ -322,14 +320,14 @@ class _AppUsageBar extends StatelessWidget {
 
 // ── Most Ignored Card ──────────────────────────────────────────────────
 
-class _MostIgnoredCard extends StatelessWidget {
-  const _MostIgnoredCard({required this.app});
+class MostIgnoredCard extends StatelessWidget {
+  const MostIgnoredCard({required this.app, super.key});
 
   final AppStat app;
 
   @override
   Widget build(BuildContext context) {
-    final AppLocalizations l10n = AppLocalizations.of(context);
+    final AppLocalizations localization = AppLocalizations.of(context);
     return Container(
       width: double.infinity,
       padding: EdgeInsets.all(AppSizes.lg),
@@ -351,7 +349,7 @@ class _MostIgnoredCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  l10n.mostIgnored,
+                  localization.mostIgnored,
                   style: AppTextStyles.labelMedium,
                 ),
                 SizedBox(height: AppSizes.xs),
@@ -361,7 +359,7 @@ class _MostIgnoredCard extends StatelessWidget {
                 ),
                 SizedBox(height: AppSizes.xs),
                 Text(
-                  l10n.onlyToday(DurationFormatter.format(app.totalTime)),
+                  localization.onlyToday(DurationFormatter.format(app.totalTime)),
                   style: AppTextStyles.bodySmall,
                 ),
               ],
@@ -377,12 +375,11 @@ class _MostIgnoredCard extends StatelessWidget {
 // EMPTY VIEW
 // ════════════════════════════════════════════════════════════════════════
 
-class _SummaryEmptyView extends StatelessWidget {
-  const _SummaryEmptyView();
+class SummaryEmptyView extends StatelessWidget {
+  const SummaryEmptyView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final AppLocalizations l10n = AppLocalizations.of(context);
     return Center(
       child: Padding(
         padding: EdgeInsets.all(AppSizes.pagePadding),
@@ -396,12 +393,12 @@ class _SummaryEmptyView extends StatelessWidget {
             ),
             SizedBox(height: AppSizes.lg),
             Text(
-              l10n.noDataYet,
+              localization.noDataYet,
               style: AppTextStyles.titleLarge,
             ),
             SizedBox(height: AppSizes.sm),
             Text(
-              l10n.emptySubtitle,
+              localization.emptySubtitle,
               textAlign: TextAlign.center,
               style: AppTextStyles.bodyMedium,
             ),
@@ -409,7 +406,7 @@ class _SummaryEmptyView extends StatelessWidget {
             CustomButton.iconText(
               onPressed: () => context.read<SummaryCubit>().load(),
               icon: const Icon(Icons.refresh),
-              label: l10n.retry,
+              label: localization.retry,
             ),
           ],
         ),
@@ -422,14 +419,13 @@ class _SummaryEmptyView extends StatelessWidget {
 // ERROR VIEW
 // ════════════════════════════════════════════════════════════════════════
 
-class _SummaryErrorView extends StatelessWidget {
-  const _SummaryErrorView({required this.error});
+class SummaryErrorView extends StatelessWidget {
+  const SummaryErrorView({required this.error, super.key});
 
   final AppException error;
 
   @override
   Widget build(BuildContext context) {
-    final AppLocalizations l10n = AppLocalizations.of(context);
     return Center(
       child: Padding(
         padding: EdgeInsets.all(AppSizes.pagePadding),
@@ -443,7 +439,7 @@ class _SummaryErrorView extends StatelessWidget {
             ),
             SizedBox(height: AppSizes.lg),
             Text(
-              l10n.oops,
+              localization.oops,
               style: AppTextStyles.titleLarge,
             ),
             SizedBox(height: AppSizes.sm),
@@ -456,7 +452,7 @@ class _SummaryErrorView extends StatelessWidget {
             CustomButton.iconText(
               onPressed: () => context.read<SummaryCubit>().load(),
               icon: const Icon(Icons.refresh),
-              label: l10n.retry,
+              label: localization.retry,
             ),
           ],
         ),
