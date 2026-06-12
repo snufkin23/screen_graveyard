@@ -1,4 +1,4 @@
-package com.sushant.screen_graveyard
+package com.screen_graveyard.screen_graveyard
 
 import android.app.AppOpsManager
 import android.app.usage.UsageEvents
@@ -13,7 +13,7 @@ import java.util.Calendar
 
 class MainActivity : FlutterActivity() {
 
-    private val channel = "com.sushant.screen_graveyard/usage_stats"
+    private val channel = "com.screen_graveyard.screen_graveyard/usage_stats"
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)

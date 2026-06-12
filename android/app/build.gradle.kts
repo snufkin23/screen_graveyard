@@ -9,7 +9,7 @@ plugins {
 }
 
 android {
-    namespace = "com.sushant.screen_graveyard"
+    namespace = "com.screen_graveyard.screen_graveyard"
     compileSdk = 36
 
     compileOptions {
@@ -26,7 +26,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.sushant.screen_graveyard"
+        applicationId = "com.screen_graveyard.screen_graveyard"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
