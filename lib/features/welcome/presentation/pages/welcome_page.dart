@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:screen_graveyard/core/di/injection.dart';
-
+import 'package:screen_graveyard/core/router/app_router.gr.dart';
 import 'package:screen_graveyard/core/theme/app_colors.dart';
 import 'package:screen_graveyard/core/theme/app_text_styles.dart';
 import 'package:screen_graveyard/core/widgets/widgets.dart';
@@ -18,6 +18,24 @@ class WelcomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider<WelcomeCubit>(
       create: (_) => getIt<WelcomeCubit>(),
+      child: const WelcomeView(),
+    );
+  }
+}
+
+class WelcomeView extends StatelessWidget {
+  const WelcomeView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocListener<WelcomeCubit, bool>(
+      listener: (BuildContext context, bool state) {
+        if (state) {
+          context.router.replaceAll(<PageRouteInfo<Object?>>[
+            const OnboardingRoute(),
+          ]);
+        }
+      },
       child: CustomScaffold(
         body: SafeArea(
           child: Padding(
@@ -25,7 +43,6 @@ class WelcomePage extends StatelessWidget {
             child: Column(
               children: <Widget>[
                 const Spacer(),
-                // Brand Icon/Illustration
                 const Icon(
                   Icons.auto_awesome_rounded,
                   size: 120,
@@ -44,11 +61,16 @@ class WelcomePage extends StatelessWidget {
                   style: AppTextStyles.bodyLarge,
                 ),
                 const Spacer(),
-                CustomButton(
-                  label: localization.getStarted,
-                  onPressed: () => context.read<WelcomeCubit>().setWelcome(),
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 16.h),
+                  child: SafeArea(
+                    top: false,
+                    child: CustomButton(
+                      label: localization.getStarted,
+                      onPressed: () => context.read<WelcomeCubit>().setWelcome(),
+                    ),
+                  ),
                 ),
-                SizedBox(height: 32.h),
               ],
             ),
           ),
