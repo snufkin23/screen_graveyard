@@ -24,6 +24,16 @@ abstract class AppException with _$AppException implements Exception {
   // Permission (device-level e.g. camera, location)
   const factory AppException.permission({required String message}) = PermissionException;
 
+  // Usage Stats (Android device usage statistics)
+  const factory AppException.usageStats({
+    @Default('Failed to read usage statistics from device') String message,
+  }) = UsageStatsException;
+
+  // Local Storage (Hive/disk)
+  const factory AppException.storage({
+    @Default('Failed to read or write local storage') String message,
+  }) = StorageException;
+
   // Unknown
   const factory AppException.unknown({
     @Default('An unexpected error occurred.') String message,
@@ -37,6 +47,8 @@ extension AppExceptionX on AppException {
         unauthenticated: (String message) => message,
         navigation: (String message) => message,
         permission: (String message) => message,
+        usageStats: (String message) => message,
+        storage: (String message) => message,
         unknown: (String message) => message,
       );
 
@@ -45,5 +57,7 @@ extension AppExceptionX on AppException {
   bool get isUnauthenticated => this is UnauthenticatedException;
   bool get isNavigation => this is NavigationException;
   bool get isPermission => this is PermissionException;
+  bool get isUsageStats => this is UsageStatsException;
+  bool get isStorage => this is StorageException;
   bool get isUnknown => this is UnknownAppException;
 }

@@ -11,7 +11,7 @@ class PermissionService {
   final DeviceInfoPlugin _deviceInfo;
 
   static const MethodChannel _channel = MethodChannel(
-    'com.sushant.screengraveyard/usage_stats',
+    'com.sushant.screen_graveyard/usage_stats',
   );
 
   // ── Notification ───────────────────────────────────────────────────────────

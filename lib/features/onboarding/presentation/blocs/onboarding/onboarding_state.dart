@@ -6,7 +6,11 @@ sealed class OnboardingState with _$OnboardingState {
 
   const factory OnboardingState.about() = _About;
 
-  const factory OnboardingState.permission() = _Permission;
+  const factory OnboardingState.permission({
+    @Default(false) bool isUsageStatsGranted,
+    @Default(false) bool isChecking,
+    @Default(false) bool isRequesting,
+  }) = _Permission;
 
   const factory OnboardingState.completed() = _Completed;
 }

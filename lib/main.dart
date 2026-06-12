@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:screen_graveyard/core/app/presentation/app.dart';
 import 'package:screen_graveyard/core/app/presentation/blocs/app_bloc_observer.dart';
 import 'package:screen_graveyard/core/di/injection.dart';
@@ -35,6 +36,9 @@ Future<void> main() async {
 
       // ── Dependency injection ────────────────────────────────────
       await configureDependencies();
+
+      // ── Mobile Ads ──────────────────────────────────────────────
+      await MobileAds.instance.initialize();
 
       // ── Notification service ────────────────────────────────────
       getIt<NotificationService>();

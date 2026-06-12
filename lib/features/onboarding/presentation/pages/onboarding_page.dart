@@ -4,11 +4,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:screen_graveyard/core/di/injection.dart';
 import 'package:screen_graveyard/core/router/app_router.gr.dart';
+import 'package:screen_graveyard/core/theme/app_colors.dart';
+import 'package:screen_graveyard/core/theme/app_text_styles.dart';
 import 'package:screen_graveyard/core/widgets/widgets.dart';
 import 'package:screen_graveyard/features/onboarding/presentation/blocs/onboarding/onboarding_cubit.dart';
+import 'package:screen_graveyard/features/onboarding/presentation/widgets/onboarding_permission_page.dart';
 import 'package:screen_graveyard/features/onboarding/presentation/widgets/onboarding_progress_indicator.dart';
-import 'package:screen_graveyard/features/onboarding/presentation/widgets/onboarding_step_view.dart';
-import 'package:screen_graveyard/localization/localization.dart';
 
 @RoutePage()
 class OnboardingPage extends StatelessWidget {
@@ -30,136 +31,315 @@ class OnboardingView extends StatefulWidget {
   State<OnboardingView> createState() => _OnboardingViewState();
 }
 
-class _OnboardingViewState extends State<OnboardingView> {
+class _OnboardingViewState extends State<OnboardingView> with WidgetsBindingObserver {
   late final PageController _pageController;
 
-  static const IconData _introIcon = Icons.auto_awesome_rounded;
-  static const IconData _aboutIcon = Icons.architecture_rounded;
-  static const IconData _permissionIcon = Icons.tune_rounded;
+  // Page index → onboarding step mapping
+  // 0: introduction, 1: about, 2: permission (usage stats)
+  static const int _totalPages = 3;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _pageController = PageController();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final int initialIndex = context.read<OnboardingCubit>().state.when(
             introduction: () => 0,
             about: () => 1,
-            permission: () => 2,
+            permission: (bool a, bool b, bool c) => 2,
             completed: () => 2,
           );
-      _pageController.jumpToPage(initialIndex);
+      if (initialIndex > 0) {
+        _pageController.jumpToPage(initialIndex);
+      }
     });
   }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _pageController.dispose();
     super.dispose();
+  }
+
+  /// Forward app lifecycle events to the cubit so it can re-check
+  /// permissions after the user returns from system settings.
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState lifecycleState) {
+    if (lifecycleState == AppLifecycleState.resumed) {
+      context.read<OnboardingCubit>().onResume();
+    }
+  }
+
+  void _goToPage(int index) {
+    _pageController.animateToPage(
+      index,
+      duration: const Duration(milliseconds: 350),
+      curve: Curves.easeInOut,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocListener<OnboardingCubit, OnboardingState>(
+      listenWhen: (OnboardingState prev, OnboardingState curr) =>
+          curr.maybeWhen(completed: () => true, orElse: () => false),
       listener: (BuildContext context, OnboardingState state) {
-        final int index = state.when(
-          introduction: () => 0,
-          about: () => 1,
-          permission: () => 2,
-          completed: () => 2,
-        );
-
-        _pageController.animateToPage(
-          index,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
-        );
-
-        state.maybeWhen(
-          completed: () => context.router.replace(const HomeRoute()),
-          orElse: () {},
-        );
+        context.router.replaceAll(<PageRouteInfo<Object?>>[const HomeRoute()]);
       },
       child: BlocBuilder<OnboardingCubit, OnboardingState>(
         builder: (BuildContext context, OnboardingState state) {
           final int currentIndex = state.when(
             introduction: () => 0,
             about: () => 1,
-            permission: () => 2,
+            permission: (bool a, bool b, bool c) => 2,
             completed: () => 2,
           );
 
+          final AppColorScheme colors = context.appColors;
+
           return CustomScaffold(
-            body: SafeArea(
-              child: Column(
-                children: <Widget>[
-                  Expanded(
-                    child: PageView(
-                      controller: _pageController,
-                      onPageChanged: (int index) {
-                        if (index > currentIndex) {
+            scaffoldBackgroundColor: colors.surface,
+            usePadding: false,
+            body: Column(
+              children: <Widget>[
+                // ── Progress indicator ───────────────────────────────────
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 28.w, vertical: 20.h),
+                  child: OnboardingProgressIndicator(
+                    currentIndex: currentIndex,
+                    total: _totalPages,
+                  ),
+                ),
+
+                // ── Pages ────────────────────────────────────────────────
+                Expanded(
+                  child: PageView(
+                    controller: _pageController,
+                    physics: const NeverScrollableScrollPhysics(),
+                    children: <Widget>[
+                      // Page 0 — Introduction
+                      IntroductionPage(
+                        onContinue: () {
                           context.read<OnboardingCubit>().next();
-                        } else if (index < currentIndex) {
-                          context.read<OnboardingCubit>().previous();
-                        }
-                      },
-                      children: <Widget>[
-                        OnboardingStepView(
-                          icon: _introIcon,
-                          title: localization.onboardingTitle1,
-                          description: localization.onboardingDesc1,
-                        ),
-                        OnboardingStepView(
-                          icon: _aboutIcon,
-                          title: localization.onboardingTitle2,
-                          description: localization.onboardingDesc2,
-                        ),
-                        OnboardingStepView(
-                          icon: _permissionIcon,
-                          title: localization.onboardingTitle3,
-                          description: localization.onboardingDesc3,
-                        ),
-                      ],
-                    ),
+                          _goToPage(1);
+                        },
+                      ),
+
+                      // Page 1 — About
+                      AboutPage(
+                        onContinue: () {
+                          context.read<OnboardingCubit>().next();
+                          _goToPage(2);
+                        },
+                      ),
+
+                      // Page 2 — Usage Stats Permission
+                      OnboardingPermissionPage(
+                        title: 'Track Your Screen Time',
+                        description: 'Screen Graveyard needs Usage Stats access to '
+                            'monitor app usage and screen time. This allows '
+                            'the app to analyze your device usage patterns '
+                            'and provide accurate insights about your '
+                            'digital habits.',
+                        icon: Icons.query_stats_rounded,
+                        onContinue: () {
+                          context.read<OnboardingCubit>().next();
+                        },
+                      ),
+                    ],
                   ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 24.w,
-                      vertical: 32.h,
-                    ),
-                    child: Column(
-                      children: <Widget>[
-                        OnboardingProgressIndicator(
-                          currentIndex: currentIndex,
-                          totalSteps: 3,
-                        ),
-                        SizedBox(height: 32.h),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            if (currentIndex > 0)
-                              CustomOutlinedButton(
-                                label: localization.back,
-                                onPressed: () => context.read<OnboardingCubit>().previous(),
-                              )
-                            else
-                              const SizedBox.shrink(),
-                            CustomButton(
-                              label: currentIndex == 2 ? localization.getStarted : localization.continueButton,
-                              onPressed: () => context.read<OnboardingCubit>().next(),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           );
         },
       ),
+    );
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// Page 0 — Introduction
+// ═══════════════════════════════════════════════════════════════════════════════
+
+class IntroductionPage extends StatelessWidget {
+  const IntroductionPage({required this.onContinue, super.key});
+
+  final VoidCallback onContinue;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppColorScheme colors = context.appColors;
+
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 28.w),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          const Spacer(flex: 2),
+          Text(
+            'Your phone has\na graveyard.',
+            style: AppTextStyles.headlineLarge.copyWith(
+              color: colors.onSurface,
+              height: 1.2,
+            ),
+          ),
+          SizedBox(height: 20.h),
+          Text(
+            'Every notification you dismissed, every app you opened '
+            'and forgot — they all leave a trace. '
+            "It's time to see them.",
+            style: AppTextStyles.bodyLarge.copyWith(
+              color: colors.onSurfaceTertiary,
+            ),
+          ),
+          const Spacer(flex: 3),
+          CustomButton(
+            label: 'Show me',
+            onPressed: onContinue,
+            expanded: true,
+          ),
+          SizedBox(height: 40.h),
+        ],
+      ),
+    );
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// Page 1 — About (what we track)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+class AboutPage extends StatelessWidget {
+  const AboutPage({required this.onContinue, super.key});
+
+  final VoidCallback onContinue;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppColorScheme colors = context.appColors;
+    final Color primary = Theme.of(context).colorScheme.primary;
+
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 28.w),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          const Spacer(flex: 2),
+          Text(
+            'What we track.',
+            style: AppTextStyles.headlineLarge.copyWith(
+              color: colors.onSurface,
+            ),
+          ),
+          SizedBox(height: 32.h),
+          AboutItem(
+            icon: Icons.lock_open_rounded,
+            title: 'Unlocks',
+            subtitle: 'How many times you checked your phone today.',
+            iconColor: primary,
+          ),
+          SizedBox(height: 24.h),
+          AboutItem(
+            icon: Icons.apps_rounded,
+            title: 'App usage',
+            subtitle: 'Which apps got your attention — and for how long.',
+            iconColor: primary,
+          ),
+          SizedBox(height: 24.h),
+          AboutItem(
+            icon: Icons.notifications_off_outlined,
+            title: 'Dismissed notifications',
+            subtitle: 'The apps you ghosted without a second thought.',
+            iconColor: primary,
+          ),
+          SizedBox(height: 32.h),
+          Row(
+            children: <Widget>[
+              Icon(
+                Icons.shield_outlined,
+                size: 16,
+                color: primary,
+              ),
+              SizedBox(width: 8.w),
+              Expanded(
+                child: Text(
+                  'Everything stays on your device. We never collect or share your data.',
+                  style: AppTextStyles.bodySmall.copyWith(
+                    color: colors.onSurfaceVariant,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const Spacer(flex: 2),
+          CustomButton(
+            label: 'Understood',
+            onPressed: onContinue,
+            expanded: true,
+          ),
+          SizedBox(height: 40.h),
+        ],
+      ),
+    );
+  }
+}
+
+class AboutItem extends StatelessWidget {
+  const AboutItem({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.iconColor,
+    super.key,
+  });
+
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final Color iconColor;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppColorScheme colors = context.appColors;
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Container(
+          width: 44.w,
+          height: 44.w,
+          decoration: BoxDecoration(
+            color: iconColor.withValues(alpha: 0.12),
+            borderRadius: BorderRadius.circular(12.r),
+          ),
+          child: Icon(icon, color: iconColor, size: 22.sp),
+        ),
+        SizedBox(width: 16.w),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                title,
+                style: AppTextStyles.titleSmall.copyWith(
+                  color: colors.onSurface,
+                ),
+              ),
+              SizedBox(height: 4.h),
+              Text(
+                subtitle,
+                style: AppTextStyles.bodySmall.copyWith(
+                  color: colors.onSurfaceTertiary,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

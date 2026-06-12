@@ -1,33 +1,44 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
-import 'package:screen_graveyard/core/constants/constants.dart';
+import 'package:screen_graveyard/core/theme/app_colors.dart';
 
 class OnboardingProgressIndicator extends StatelessWidget {
   const OnboardingProgressIndicator({
     required this.currentIndex,
-    required this.totalSteps,
+    required this.total,
     super.key,
   });
 
   final int currentIndex;
-  final int totalSteps;
+  final int total;
 
   @override
   Widget build(BuildContext context) {
+    final AppColorScheme colors = context.appColors;
+
     return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: List<Widget>.generate(totalSteps, (int index) {
-        final bool isActive = index == currentIndex;
-        return AnimatedContainer(
-          duration: const Duration(milliseconds: 300),
-          margin: EdgeInsets.symmetric(horizontal: 4.w),
-          height: 8.h,
-          width: isActive ? 24.w : 8.w,
-          decoration: BoxDecoration(
-            color: isActive
-                ? Theme.of(context).colorScheme.primary
-                : Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
-            borderRadius: BorderRadius.circular(AppSizes.radiusMd),
+      children: List<Widget>.generate(total, (int index) {
+        final bool isActive = index <= currentIndex;
+        final bool isCurrent = index == currentIndex;
+
+        return Expanded(
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+            height: 3.h,
+            margin: EdgeInsets.only(right: index < total - 1 ? 6.w : 0),
+            decoration: BoxDecoration(
+              color: isActive ? AppColors.primary : colors.surfaceContainer,
+              borderRadius: BorderRadius.circular(2.r),
+              boxShadow: isCurrent
+                  ? <BoxShadow>[
+                      BoxShadow(
+                        color: AppColors.primary.withValues(alpha: 0.4),
+                        blurRadius: 6,
+                      ),
+                    ]
+                  : null,
+            ),
           ),
         );
       }),
