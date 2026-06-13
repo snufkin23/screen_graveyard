@@ -40,7 +40,7 @@ class _AppState extends State<App> {
                 },
                 ready: () {
                   _appRouter.replaceAll(<PageRouteInfo<Object?>>[
-                    const HomeRoute(),
+                    const SummaryRoute(),
                   ]);
                 },
                 orElse: () {},

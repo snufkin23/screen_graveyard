@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
+import 'package:screen_graveyard/core/extensions/theme_context.dart';
 import 'package:screen_graveyard/core/theme/app_colors.dart';
 import 'package:screen_graveyard/core/theme/app_text_styles.dart';
 import 'package:screen_graveyard/core/widgets/widgets.dart';
 import 'package:screen_graveyard/features/onboarding/presentation/blocs/onboarding/onboarding_cubit.dart';
+import 'package:screen_graveyard/localization/localization.dart';
 
 /// Reusable permission page wired into [OnboardingCubit] for state management.
 ///
@@ -26,8 +28,7 @@ class OnboardingPermissionPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final AppColorScheme colors = context.appColors;
-    final Color primary = Theme.of(context).colorScheme.primary;
+    final Color primary = context.colors.primary;
 
     return BlocBuilder<OnboardingCubit, OnboardingState>(
       builder: (BuildContext context, OnboardingState state) {
@@ -80,7 +81,7 @@ class OnboardingPermissionPage extends StatelessWidget {
               Text(
                 title,
                 style: AppTextStyles.headlineSmall.copyWith(
-                  color: colors.onSurface,
+                  color: context.colors.onSurface,
                 ),
               ),
 
@@ -90,7 +91,7 @@ class OnboardingPermissionPage extends StatelessWidget {
               Text(
                 description,
                 style: AppTextStyles.bodyMedium.copyWith(
-                  color: colors.onSurfaceTertiary,
+                  color: context.appColors.onSurfaceTertiary,
                   height: 1.6,
                 ),
               ),
@@ -101,24 +102,23 @@ class OnboardingPermissionPage extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.all(14.w),
                   decoration: BoxDecoration(
-                    color: colors.surfaceContainer,
+                    color: context.appColors.surfaceContainer,
                     borderRadius: BorderRadius.circular(12.r),
-                    border: Border.all(color: colors.border),
+                    border: Border.all(color: context.appColors.border),
                   ),
                   child: Row(
                     children: <Widget>[
                       Icon(
                         Icons.info_outline_rounded,
                         size: 16,
-                        color: colors.onSurfaceVariant,
+                        color: context.colors.onSurfaceVariant,
                       ),
                       SizedBox(width: 10.w),
                       Expanded(
                         child: Text(
-                          'You\'ll be taken to system settings. '
-                          'Find Screen Graveyard and toggle it on, then return.',
+                          localization.permissionHint,
                           style: AppTextStyles.bodySmall.copyWith(
-                            color: colors.onSurfaceVariant,
+                            color: context.colors.onSurfaceVariant,
                           ),
                         ),
                       ),
@@ -148,7 +148,7 @@ class OnboardingPermissionPage extends StatelessWidget {
                       ),
                       SizedBox(width: 10.w),
                       Text(
-                        'Permission granted',
+                        localization.permissionGrantedMessage,
                         style: AppTextStyles.bodySmall.copyWith(
                           color: AppColors.success,
                           fontWeight: FontWeight.w600,
@@ -163,7 +163,7 @@ class OnboardingPermissionPage extends StatelessWidget {
 
               // ── CTA ────────────────────────────────────────────────────────
               CustomButton(
-                label: isGranted ? 'Continue' : 'Grant Access',
+                label: isGranted ? localization.permissionContinue : localization.permissionGrantAccess,
                 onPressed: isGranted ? onContinue : () => context.read<OnboardingCubit>().requestUsageStatsPermission(),
                 expanded: true,
                 isLoading: !isGranted && isRequesting,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
+import 'package:screen_graveyard/core/extensions/theme_context.dart';
 import 'package:screen_graveyard/core/theme/app_colors.dart';
 
 class OnboardingProgressIndicator extends StatelessWidget {
@@ -14,8 +15,6 @@ class OnboardingProgressIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final AppColorScheme colors = context.appColors;
-
     return Row(
       children: List<Widget>.generate(total, (int index) {
         final bool isActive = index <= currentIndex;
@@ -28,12 +27,12 @@ class OnboardingProgressIndicator extends StatelessWidget {
             height: 3.h,
             margin: EdgeInsets.only(right: index < total - 1 ? 6.w : 0),
             decoration: BoxDecoration(
-              color: isActive ? AppColors.primary : colors.surfaceContainer,
+              color: isActive ? context.colors.primary : context.appColors.surfaceContainer,
               borderRadius: BorderRadius.circular(2.r),
               boxShadow: isCurrent
                   ? <BoxShadow>[
                       BoxShadow(
-                        color: AppColors.primary.withValues(alpha: 0.4),
+                        color: context.colors.primary.withValues(alpha: 0.4),
                         blurRadius: 6,
                       ),
                     ]

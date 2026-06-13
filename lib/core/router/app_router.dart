@@ -11,6 +11,7 @@ class AppRouter extends RootStackRouter {
   List<AutoRoute> get routes => <AutoRoute>[
         AutoRoute(page: WelcomeRoute.page, initial: true),
         AutoRoute(page: OnboardingRoute.page),
-        AutoRoute(page: HomeRoute.page),
+        AutoRoute(page: SummaryRoute.page),
+        AutoRoute(page: HistoryRoute.page),
       ];
 }

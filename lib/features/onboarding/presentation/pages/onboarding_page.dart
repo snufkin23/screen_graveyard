@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:screen_graveyard/core/di/injection.dart';
+import 'package:screen_graveyard/core/extensions/theme_context.dart';
 import 'package:screen_graveyard/core/router/app_router.gr.dart';
 import 'package:screen_graveyard/core/theme/app_colors.dart';
 import 'package:screen_graveyard/core/theme/app_text_styles.dart';
@@ -10,6 +11,7 @@ import 'package:screen_graveyard/core/widgets/widgets.dart';
 import 'package:screen_graveyard/features/onboarding/presentation/blocs/onboarding/onboarding_cubit.dart';
 import 'package:screen_graveyard/features/onboarding/presentation/widgets/onboarding_permission_page.dart';
 import 'package:screen_graveyard/features/onboarding/presentation/widgets/onboarding_progress_indicator.dart';
+import 'package:screen_graveyard/localization/localization.dart';
 
 @RoutePage()
 class OnboardingPage extends StatelessWidget {
@@ -87,7 +89,7 @@ class _OnboardingViewState extends State<OnboardingView> with WidgetsBindingObse
       listenWhen: (OnboardingState prev, OnboardingState curr) =>
           curr.maybeWhen(completed: () => true, orElse: () => false),
       listener: (BuildContext context, OnboardingState state) {
-        context.router.replaceAll(<PageRouteInfo<Object?>>[const HomeRoute()]);
+        context.router.replaceAll(<PageRouteInfo<Object?>>[const SummaryRoute()]);
       },
       child: BlocBuilder<OnboardingCubit, OnboardingState>(
         builder: (BuildContext context, OnboardingState state) {
@@ -98,10 +100,8 @@ class _OnboardingViewState extends State<OnboardingView> with WidgetsBindingObse
             completed: () => 2,
           );
 
-          final AppColorScheme colors = context.appColors;
-
           return CustomScaffold(
-            scaffoldBackgroundColor: colors.surface,
+            scaffoldBackgroundColor: context.colors.surface,
             usePadding: false,
             body: Column(
               children: <Widget>[
@@ -138,12 +138,8 @@ class _OnboardingViewState extends State<OnboardingView> with WidgetsBindingObse
 
                       // Page 2 — Usage Stats Permission
                       OnboardingPermissionPage(
-                        title: 'Track Your Screen Time',
-                        description: 'Screen Graveyard needs Usage Stats access to '
-                            'monitor app usage and screen time. This allows '
-                            'the app to analyze your device usage patterns '
-                            'and provide accurate insights about your '
-                            'digital habits.',
+                        title: localization.permissionTitle,
+                        description: localization.permissionDesc,
                         icon: Icons.query_stats_rounded,
                         onContinue: () {
                           context.read<OnboardingCubit>().next();
@@ -172,8 +168,6 @@ class IntroductionPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final AppColorScheme colors = context.appColors;
-
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 28.w),
       child: Column(
@@ -181,26 +175,24 @@ class IntroductionPage extends StatelessWidget {
         children: <Widget>[
           const Spacer(flex: 2),
           Text(
-            'Your phone has\na graveyard.',
+            localization.introTitle,
             style: AppTextStyles.headlineLarge.copyWith(
-              color: colors.onSurface,
+              color: context.colors.onSurface,
               height: 1.2,
             ),
           ),
           SizedBox(height: 20.h),
           Text(
-            'Every notification you dismissed, every app you opened '
-            'and forgot — they all leave a trace. '
-            "It's time to see them.",
+            localization.introDesc,
             style: AppTextStyles.bodyLarge.copyWith(
-              color: colors.onSurfaceTertiary,
+              color: context.colors.onSurfaceVariant,
             ),
           ),
           const Spacer(flex: 3),
-          CustomButton(
-            label: 'Show me',
+          CustomButton.iconText(
+            icon: const Icon(Icons.arrow_forward_rounded),
+            label: localization.introButton,
             onPressed: onContinue,
-            expanded: true,
           ),
           SizedBox(height: 40.h),
         ],
@@ -220,8 +212,7 @@ class AboutPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final AppColorScheme colors = context.appColors;
-    final Color primary = Theme.of(context).colorScheme.primary;
+    final Color primary = context.colors.primary;
 
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 28.w),
@@ -230,30 +221,30 @@ class AboutPage extends StatelessWidget {
         children: <Widget>[
           const Spacer(flex: 2),
           Text(
-            'What we track.',
+            localization.aboutTitle,
             style: AppTextStyles.headlineLarge.copyWith(
-              color: colors.onSurface,
+              color: context.colors.onSurface,
             ),
           ),
           SizedBox(height: 32.h),
           AboutItem(
             icon: Icons.lock_open_rounded,
-            title: 'Unlocks',
-            subtitle: 'How many times you checked your phone today.',
+            title: localization.aboutUnlocksTitle,
+            subtitle: localization.aboutUnlocksDesc,
             iconColor: primary,
           ),
           SizedBox(height: 24.h),
           AboutItem(
             icon: Icons.apps_rounded,
-            title: 'App usage',
-            subtitle: 'Which apps got your attention — and for how long.',
+            title: localization.aboutAppUsageTitle,
+            subtitle: localization.aboutAppUsageDesc,
             iconColor: primary,
           ),
           SizedBox(height: 24.h),
           AboutItem(
             icon: Icons.notifications_off_outlined,
-            title: 'Dismissed notifications',
-            subtitle: 'The apps you ghosted without a second thought.',
+            title: localization.aboutDismissedTitle,
+            subtitle: localization.aboutDismissedDesc,
             iconColor: primary,
           ),
           SizedBox(height: 32.h),
@@ -267,19 +258,19 @@ class AboutPage extends StatelessWidget {
               SizedBox(width: 8.w),
               Expanded(
                 child: Text(
-                  'Everything stays on your device. We never collect or share your data.',
+                  localization.aboutPrivacy,
                   style: AppTextStyles.bodySmall.copyWith(
-                    color: colors.onSurfaceVariant,
+                    color: context.colors.onSurfaceVariant,
                   ),
                 ),
               ),
             ],
           ),
           const Spacer(flex: 2),
-          CustomButton(
-            label: 'Understood',
+          CustomButton.iconText(
+            icon: const Icon(Icons.check_rounded),
+            label: localization.aboutButton,
             onPressed: onContinue,
-            expanded: true,
           ),
           SizedBox(height: 40.h),
         ],
@@ -304,8 +295,6 @@ class AboutItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final AppColorScheme colors = context.appColors;
-
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -326,14 +315,14 @@ class AboutItem extends StatelessWidget {
               Text(
                 title,
                 style: AppTextStyles.titleSmall.copyWith(
-                  color: colors.onSurface,
+                  color: context.colors.onSurface,
                 ),
               ),
               SizedBox(height: 4.h),
               Text(
                 subtitle,
                 style: AppTextStyles.bodySmall.copyWith(
-                  color: colors.onSurfaceTertiary,
+                  color: context.appColors.onSurfaceTertiary,
                 ),
               ),
             ],
