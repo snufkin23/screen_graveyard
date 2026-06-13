@@ -2,6 +2,7 @@ enum OnboardingStep {
   introduction,
   about,
   permission,
+  storage,
   completed;
 
   static OnboardingStep fromString(String? value) {

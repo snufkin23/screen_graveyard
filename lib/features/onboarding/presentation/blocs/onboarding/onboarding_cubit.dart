@@ -30,6 +30,9 @@ class OnboardingCubit extends Cubit<OnboardingState> {
     if (step == OnboardingStep.permission) {
       emit(const OnboardingState.permission(isChecking: true));
       checkUsageStatsPermission();
+    } else if (step == OnboardingStep.storage) {
+      emit(const OnboardingState.storage(isChecking: true));
+      checkStoragePermission();
     } else {
       emit(_mapStepToState(step));
     }
@@ -41,6 +44,9 @@ class OnboardingCubit extends Cubit<OnboardingState> {
     if (step == OnboardingStep.permission) {
       emit(const OnboardingState.permission(isChecking: true));
       checkUsageStatsPermission();
+    } else if (step == OnboardingStep.storage) {
+      emit(const OnboardingState.storage(isChecking: true));
+      checkStoragePermission();
     } else {
       emit(_mapStepToState(step));
     }
@@ -62,6 +68,22 @@ class OnboardingCubit extends Cubit<OnboardingState> {
 
   void reset() {
     _persistAndEmit(OnboardingStep.introduction);
+  }
+
+  /// Directly save a step (used by the page's imperative navigation).
+  void saveStep(OnboardingStep step) {
+    _persistAndEmit(step);
+  }
+
+  /// Public helper to extract the current step from the sealed state.
+  OnboardingStep get currentStep {
+    return state.when(
+      introduction: () => OnboardingStep.introduction,
+      about: () => OnboardingStep.about,
+      permission: (_, __, ___) => OnboardingStep.permission,
+      storage: (_, __, ___) => OnboardingStep.storage,
+      completed: () => OnboardingStep.completed,
+    );
   }
 
   // ── Lifecycle (called from page's WidgetsBindingObserver) ─────────────────
@@ -139,13 +161,71 @@ class OnboardingCubit extends Cubit<OnboardingState> {
     }
   }
 
+  // ── Permission: Storage ───────────────────────────────────────────────────
+
+  Future<void> checkStoragePermission() async {
+    final bool isNowGranted = await _permissionService.isStorageGranted().then(
+          (PermissionStatus status) => status == PermissionStatus.granted,
+        );
+
+    if (!isClosed) {
+      emit(
+        state.maybeWhen(
+          storage: (
+            bool g,
+            bool c,
+            bool requesting,
+          ) =>
+              OnboardingState.storage(
+            isStorageGranted: isNowGranted,
+            isChecking: false,
+            isRequesting: requesting,
+          ),
+          orElse: () => state,
+        ),
+      );
+    }
+  }
+
+  Future<void> requestStoragePermission() async {
+    emit(
+      state.maybeWhen(
+        storage: (
+          bool granted,
+          bool checking,
+          bool requesting,
+        ) =>
+            OnboardingState.storage(
+          isStorageGranted: granted,
+          isChecking: checking,
+          isRequesting: true,
+        ),
+        orElse: () => state,
+      ),
+    );
+
+    final PermissionStatus result = await _permissionService.requestStorage();
+    final bool isNowGranted = result == PermissionStatus.granted;
+
+    if (!isClosed) {
+      emit(
+        OnboardingState.storage(
+          isStorageGranted: isNowGranted,
+          isChecking: false,
+          isRequesting: false,
+        ),
+      );
+    }
+  }
+
   // ── Step mapping helpers ──────────────────────────────────────────────────
 
   static OnboardingStep _getNextStep(OnboardingStep step) {
     return switch (step) {
       OnboardingStep.introduction => OnboardingStep.about,
       OnboardingStep.about => OnboardingStep.permission,
-      OnboardingStep.permission => OnboardingStep.completed,
+      OnboardingStep.permission => OnboardingStep.storage,
+      OnboardingStep.storage => OnboardingStep.completed,
       OnboardingStep.completed => OnboardingStep.completed,
     };
   }
@@ -155,7 +235,8 @@ class OnboardingCubit extends Cubit<OnboardingState> {
       OnboardingStep.introduction => OnboardingStep.introduction,
       OnboardingStep.about => OnboardingStep.introduction,
       OnboardingStep.permission => OnboardingStep.about,
-      OnboardingStep.completed => OnboardingStep.permission,
+      OnboardingStep.storage => OnboardingStep.permission,
+      OnboardingStep.completed => OnboardingStep.storage,
     };
   }
 
@@ -164,6 +245,7 @@ class OnboardingCubit extends Cubit<OnboardingState> {
       OnboardingStep.introduction => const OnboardingState.introduction(),
       OnboardingStep.about => const OnboardingState.about(),
       OnboardingStep.permission => const OnboardingState.permission(),
+      OnboardingStep.storage => const OnboardingState.storage(),
       OnboardingStep.completed => const OnboardingState.completed(),
     };
   }
@@ -173,6 +255,7 @@ class OnboardingCubit extends Cubit<OnboardingState> {
       introduction: () => OnboardingStep.introduction,
       about: () => OnboardingStep.about,
       permission: (bool g, bool c, bool r) => OnboardingStep.permission,
+      storage: (bool g, bool c, bool r) => OnboardingStep.storage,
       completed: () => OnboardingStep.completed,
     );
   }

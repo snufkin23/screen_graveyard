@@ -13,4 +13,9 @@ abstract class StorageKeys {
 
   static const String themeMode = 'theme_mode';
   static const String locale = 'app_locale';
+
+  // Notification preferences
+  static const String dailyReminderEnabled = 'daily_reminder_enabled';
+  static const String dailyReminderHour = 'daily_reminder_hour';
+  static const String dailyReminderMinute = 'daily_reminder_minute';
 }

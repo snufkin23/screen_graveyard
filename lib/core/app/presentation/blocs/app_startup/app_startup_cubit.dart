@@ -28,22 +28,30 @@ class AppStartupCubit extends Cubit<AppStartupState> {
   final WelcomeRepository _welcomeRepository;
 
   Future<void> _init() async {
-    final bool hasBeenWelcomed = await _welcomeRepository.isWelcome();
+    try {
+      final bool hasBeenWelcomed = await _welcomeRepository.isWelcome();
 
-    if (hasBeenWelcomed) {
-      final String? storedStepName = _storage.get<String>(AppConstants.onboardingStepKey);
+      if (hasBeenWelcomed) {
+        final String? storedStepName = _storage.get<String>(AppConstants.onboardingStepKey);
 
-      final OnboardingStep step = OnboardingStep.fromString(storedStepName);
+        final OnboardingStep step = OnboardingStep.fromString(storedStepName);
 
-      if (step == OnboardingStep.completed) {
-        emit(const AppStartupState.ready());
+        if (step == OnboardingStep.completed) {
+          emit(const AppStartupState.ready());
+        } else {
+          emit(const AppStartupState.onboarding());
+        }
       } else {
-        emit(const AppStartupState.onboarding());
+        emit(const AppStartupState.welcome());
       }
-    } else {
-      emit(const AppStartupState.welcome());
+    } catch (e) {
+      // If persistence fails (e.g., Hive not yet opened), default to onboarding.
+      // Onboarding is a safe fallback — the user can re-complete it, which
+      // re-persists the step and repairs storage for subsequent launches.
+      emit(const AppStartupState.onboarding());
+    } finally {
+      // Always remove the splash, even on error, so the user is never stuck.
+      FlutterNativeSplash.remove();
     }
-
-    FlutterNativeSplash.remove();
   }
 }

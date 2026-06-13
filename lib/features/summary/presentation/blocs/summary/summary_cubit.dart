@@ -15,6 +15,8 @@ class SummaryCubit extends Cubit<SummaryState> {
 
   final GetTodaySnapshot _getTodaySnapshot;
 
+  Future<void> refresh() => load();
+
   Future<void> load() async {
     emit(const SummaryState.loading());
 

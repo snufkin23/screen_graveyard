@@ -76,5 +76,18 @@
   "permissionGrantedMessage": "Permission granted",
   "permissionGrantAccess": "Grant Access",
   "permissionContinue": "Continue",
-  "historyTitle": "7-Day History"
+  "historyTitle": "7-Day History",
+  "settings": "Settings",
+  "settingsAppTheme": "App Theme",
+  "settingsLanguage": "Language",
+  "settingsNotifications": "Notifications",
+  "settingsThemeSubtitle": "Choose your preferred appearance",
+  "settingsLanguageSubtitle": "Select your preferred language",
+  "settingsNotificationStatus": "Notification Status",
+  "settingsDailyReminder": "Daily Reminder",
+  "settingsDailyReminderSubtitle": "Get a daily summary notification",
+  "settingsTestNotification": "Send Test Notification",
+  "settingsTestNotificationSubtitle": "Verify notifications are working",
+  "settingsNotificationSent": "Test notification sent!",
+  "settingsReminderTime": "Reminder Time"
 }

@@ -76,5 +76,18 @@
   "permissionGrantedMessage": "अनुमति प्रदान गरियो",
   "permissionGrantAccess": "पहुँच दिनुहोस्",
   "permissionContinue": "जारी राख्नुहोस्",
-  "historyTitle": "७-दिने इतिहास"
+  "historyTitle": "७-दिने इतिहास",
+  "settings": "सेटिङहरू",
+  "settingsAppTheme": "एप थिम",
+  "settingsLanguage": "भाषा",
+  "settingsNotifications": "सूचनाहरू",
+  "settingsThemeSubtitle": "आफ्नो मनपर्ने उपस्थिति छान्नुहोस्",
+  "settingsLanguageSubtitle": "आफ्नो मनपर्ने भाषा चयन गर्नुहोस्",
+  "settingsNotificationStatus": "सूचना स्थिति",
+  "settingsDailyReminder": "दैनिक रिमाइन्डर",
+  "settingsDailyReminderSubtitle": "दैनिक सारांश सूचना प्राप्त गर्नुहोस्",
+  "settingsTestNotification": "परीक्षण सूचना पठाउनुहोस्",
+  "settingsTestNotificationSubtitle": "सूचनाहरू काम गरिरहेको छ कि जाँच गर्नुहोस्",
+  "settingsNotificationSent": "परीक्षण सूचना पठाइयो!",
+  "settingsReminderTime": "रिमाइन्डर समय"
 }

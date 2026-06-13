@@ -12,5 +12,11 @@ sealed class OnboardingState with _$OnboardingState {
     @Default(false) bool isRequesting,
   }) = _Permission;
 
+  const factory OnboardingState.storage({
+    @Default(false) bool isStorageGranted,
+    @Default(false) bool isChecking,
+    @Default(false) bool isRequesting,
+  }) = _Storage;
+
   const factory OnboardingState.completed() = _Completed;
 }
